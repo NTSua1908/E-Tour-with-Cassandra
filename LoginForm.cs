@@ -14,7 +14,6 @@ namespace Tour
 {
     public partial class LoginForm : Form
     {
-        public static string connectionString = @"Data Source=DESKTOP-CI36P6F;Initial Catalog=TourManagement;Integrated Security=True";
         System.Text.RegularExpressions.Regex rEMail = new System.Text.RegularExpressions.Regex(@"^([a-zA-Z0-9_\-])([a-zA-Z0-9_\-\.]*)@(\[((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.){3}|((([a-zA-Z0-9\-]+)\.)+))([a-zA-Z]{2,}|(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\])$");
         public LoginForm()
         {
@@ -41,7 +40,7 @@ namespace Tour
                 emailtxb.ForeColor = Color.Black;
             }
         }
-        static string Encrypt(string value)
+        public static string Encrypt(string value)
         {
             using (MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider())
             {
@@ -71,14 +70,15 @@ namespace Tour
                 Properties.Settings.Default.Password = "";
                 Properties.Settings.Default.Save();
             }
-            SqlConnection sqlc = new SqlConnection(connectionString);
-            string query = "Select * from UserID Where Email ='" + emailtxb.Text.Trim() + "' and Password = '" + Encrypt(passwordtxb.Text.Trim()) + "'";
-            SqlDataAdapter sda = new SqlDataAdapter(query, sqlc);
-            DataTable dttb = new DataTable();
-            sda.Fill(dttb);
-            if (dttb.Rows.Count == 1)
+
+            string query = "Select * from User Where Email ='" + emailtxb.Text.Trim() + "' and Password = '" + Encrypt(passwordtxb.Text.Trim()) + "'";
+
+            Cassandra.RowSet row = DataConnection.Ins.session.Execute(query);
+
+            if (row.FirstOrDefault() != null)
             {
                 Properties.Settings.Default.UserName = emailtxb.Text;
+                Properties.Settings.Default.Password = passwordtxb.Text;
                 Properties.Settings.Default.Save();
                 SelectForm menuF = new SelectForm();
                 this.Hide();

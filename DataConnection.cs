@@ -4,20 +4,43 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Cassandra;
 
 namespace Tour
 {
     class DataConnection
     {
-        String conStr;
-        public DataConnection()
-        {
-            //conStr = "Data Source= DESKTOP-QLEJV95\\SQLEXPRESS; Initial Catalog=TourManagement; Integrated Security=True";
-            conStr = "Data Source= DESKTOP-CI36P6F; Initial Catalog = TourManagement; Integrated Security = True";
+        public static DataConnection Ins { 
+            get {
+                if (_Ins == null)
+                    _Ins = new DataConnection();
+                return _Ins;
+            } 
+            set
+            {
+                _Ins = value;
+            }
         }
-        public SqlConnection getConnect()
+        private static DataConnection _Ins;
+
+        public ISession session;
+        private string IP = "127.0.0.1";
+        private string Datacenter = "datacenter1";
+
+        private DataConnection()
         {
-            return new SqlConnection(conStr);
+            session = getConnect();
+            session.Execute("use TourManagement;");
+        }
+        public ISession getConnect()
+        {
+            return session = Cluster.Builder()
+                                 .AddContactPoints(IP)
+                                 .WithPort(9042)
+                                 .WithLoadBalancingPolicy(new DCAwareRoundRobinPolicy(Datacenter))
+                                 //.WithAuthProvider(new PlainTextAuthProvider(< Username >, < Password >))
+                                 .Build()
+                                 .Connect();
         }
             
     }

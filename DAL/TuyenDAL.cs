@@ -15,12 +15,12 @@ namespace Tour
         SqlDataAdapter da;
         public TuyenDAL()
         {
-            dc = new DataConnection();
+            //dc = new DataConnection();
         }
         public DataTable getAllTuyen()
         {
             string sql = " Select ID, MaTuyen, TenTuyen, XuatPhat, DiaDiem, ThoiGianToChuc, TenLoaiTuyen from Tuyen inner join LoaiTuyen on Tuyen.MaLoaiTuyen = LoaiTuyen.MaLoaiTuyen";
-            SqlConnection con = dc.getConnect();
+            SqlConnection con = null;// dc.getConnect();
             da = new SqlDataAdapter(sql,con);
             con.Open();
             DataTable dt = new DataTable();
@@ -31,7 +31,7 @@ namespace Tour
         public bool InsertTuyen(tblTuyen route)
         {
             string sql = "Insert into Tuyen(MaTuyen, TenTuyen, XuatPhat, DiaDiem, MaLoaiTuyen,  ThoiGianToChuc) values(@MaTuyen,@TenTuyen, @XuatPhat, @DiaDiem, @MaLoaiTuyen, @ThoiGianToChuc)";
-            SqlConnection con = dc.getConnect();
+            SqlConnection con = null;// dc.getConnect();
             try
             {
                 cmd = new SqlCommand(sql, con);
@@ -53,8 +53,8 @@ namespace Tour
         }
         public bool UpdateTuyen(tblTuyen route)
         {
-            string sql = "Update Tuyen set MaTuyen=@MaTuyen, TenTuyen=@TenTuyen, XuatPhat=@XuatPhat, DiaDiem=@DiaDiem, MaLoaiTuyen=@MaLoaiTuyen, ThoiGianToChuc=@ThoiGianToChuc where ID=@ID"; 
-            SqlConnection con = dc.getConnect();
+            string sql = "Update Tuyen set MaTuyen=@MaTuyen, TenTuyen=@TenTuyen, XuatPhat=@XuatPhat, DiaDiem=@DiaDiem, MaLoaiTuyen=@MaLoaiTuyen, ThoiGianToChuc=@ThoiGianToChuc where ID=@ID";
+            SqlConnection con = null;// dc.getConnect();
             try
             {
                 cmd = new SqlCommand(sql, con);
@@ -78,7 +78,7 @@ namespace Tour
         public bool DeleteTuyen(tblTuyen route)
         {
             string sql = "Delete Tuyen where ID=@ID";
-            SqlConnection con = dc.getConnect();
+            SqlConnection con = null; // c.getConnect();
             try
             {
                 cmd = new SqlCommand(sql, con);
@@ -96,7 +96,7 @@ namespace Tour
         public DataTable FindTuyen(string route)
         {
             string sql = "Select ID, MaTuyen, TenTuyen, XuatPhat, DiaDiem, ThoiGianToChuc, TenLoaiTuyen from Tuyen inner join LoaiTuyen on Tuyen.MaLoaiTuyen = LoaiTuyen.MaLoaiTuyen where TenTuyen like N'%" + route + "%'OR MaTuyen like N'%" + route + "%'";
-            SqlConnection con = dc.getConnect();
+            SqlConnection con = null; // dc.getConnect();
             da = new SqlDataAdapter(sql, con);
             con.Open();
             DataTable dt = new DataTable();

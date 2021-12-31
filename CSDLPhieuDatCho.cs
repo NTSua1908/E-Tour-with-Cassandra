@@ -27,7 +27,7 @@ namespace Tour
         }
         public CSDLPhieuDatCho()
         {
-            dc = new DataConnection();
+            //dc = new DataConnection();
             InitializeComponent();
             tkDAL = new ticketDAL();
             tbSearchTicket.ForeColor = Color.LightGray;
@@ -78,7 +78,7 @@ namespace Tour
         public void ShowTicket()
         {
             string sql = "SELECT DuKhach.MaDuKhach, HanPassport, HanVisa, PhieuDatCho.MaChuyen, TenLoaiTuyen, TenLoaiChuyen, LePhiHoanTra, TienHoanTra, MaVe, Ve.MaPhieu, HoTen, DiaChi, SDT, GioiTinh, TenLoaiKhach, CMND_Passport, Ve.GiaVe FROM(((((((Ve INNER JOIN DuKhach ON Ve.MaDuKhach = DuKhach.MaDuKhach) INNER JOIN LoaiKhach ON DuKhach.MaLoaiKhach = LoaiKhach.MaLoaiKhach)Inner Join PhieuDatCho on PhieuDatCho.MaPhieu = Ve.MaPhieu) INNER JOIN ChuyenDuLich on PhieuDatCho.MaChuyen = ChuyenDuLich.MaChuyen) INNER JOIN Loaichuyen on ChuyenDuLich.MaLoaiChuyen = Loaichuyen.MaLoaiChuyen) INNER JOIN Tuyen on ChuyenDuLich.MaTuyen = Tuyen.MaTuyen)INNER JOIN LoaiTuyen on Tuyen.MaLoaiTuyen = LoaiTuyen.MaLoaiTuyen)";
-            SqlConnection con = dc.getConnect();
+            SqlConnection con = null;// dc.getConnect();
             adapter = new SqlDataAdapter(sql, con);
             con.Open();
             DataTable dt = new DataTable();
@@ -90,7 +90,7 @@ namespace Tour
         public void ShowTicketv2()
         {
             string sql = "Select Ve.MaPhieu, HoTen from (((Ve INNER JOIN DuKhach ON Ve.MaDuKhach = DuKhach.MaDuKhach) INNER JOIN LoaiKhach ON DuKhach.MaLoaiKhach = LoaiKhach.MaLoaiKhach)Inner Join PhieuDatCho on PhieuDatCho.MaPhieu = Ve.MaPhieu)";
-            SqlConnection con = dc.getConnect();
+            SqlConnection con = null; // dc.getConnect();
             adapter = new SqlDataAdapter(sql, con);
             con.Open();
             DataTable dt = new DataTable();
@@ -195,7 +195,7 @@ namespace Tour
             if (!string.IsNullOrEmpty(value))
             {
                 string sql = "SELECT DuKhach.MaDuKhach, HanPassport, HanVisa, PhieuDatCho.MaChuyen, TenLoaiTuyen, TenLoaiChuyen, LePhiHoanTra, TienHoanTra, MaVe, Ve.MaPhieu, HoTen, DiaChi, SDT, GioiTinh, TenLoaiKhach, CMND_Passport, Ve.GiaVe FROM(((((((Ve INNER JOIN DuKhach ON Ve.MaDuKhach = DuKhach.MaDuKhach) INNER JOIN LoaiKhach ON DuKhach.MaLoaiKhach = LoaiKhach.MaLoaiKhach)Inner Join PhieuDatCho on PhieuDatCho.MaPhieu = Ve.MaPhieu) INNER JOIN ChuyenDuLich on PhieuDatCho.MaChuyen = ChuyenDuLich.MaChuyen) INNER JOIN Loaichuyen on ChuyenDuLich.MaLoaiChuyen = Loaichuyen.MaLoaiChuyen) INNER JOIN Tuyen on ChuyenDuLich.MaTuyen = Tuyen.MaTuyen)INNER JOIN LoaiTuyen on Tuyen.MaLoaiTuyen = LoaiTuyen.MaLoaiTuyen)  where PhieuDatCho.MaChuyen like N'%" + value + "%'";
-                SqlConnection con = dc.getConnect();
+                SqlConnection con = null;// dc.getConnect();
                 adapter = new SqlDataAdapter(sql, con);
                 con.Open();
                 DataTable dt = new DataTable();
@@ -212,7 +212,7 @@ namespace Tour
             if (!string.IsNullOrEmpty(value))
             {
                 string sql = "Select PhieuDatCho.MaChuyen, Ve.MaPhieu, HoTen from (((Ve INNER JOIN DuKhach ON Ve.MaDuKhach = DuKhach.MaDuKhach) INNER JOIN LoaiKhach ON DuKhach.MaLoaiKhach = LoaiKhach.MaLoaiKhach)Inner Join PhieuDatCho on PhieuDatCho.MaPhieu = Ve.MaPhieu)  where MaChuyen like N'%" + value + "%'";
-                SqlConnection con = dc.getConnect();
+                SqlConnection con = null;// dc.getConnect();
                 adapter = new SqlDataAdapter(sql, con);
                 con.Open();
                 DataTable dt = new DataTable();
@@ -393,7 +393,7 @@ namespace Tour
         {
             float cost = 0;
             string sql = "SELECT TienHoanTra FROM LoaiChuyen WHERE TenLoaiChuyen = @TenLoaiChuyen";
-            SqlConnection con = dc.getConnect();
+            SqlConnection con = null; // dc.getConnect();
             SqlCommand cmd = new SqlCommand(sql, con);
             con.Open();
             cmd.Parameters.AddWithValue("@TenLoaiChuyen", TenLoaiChuyen);
@@ -409,7 +409,7 @@ namespace Tour
         {
             int cost = 0;
             string sql = "SELECT LePhiHoanTra FROM LoaiTuyen WHERE TenLoaiTuyen = @TenLoaiTuyen";
-            SqlConnection con = dc.getConnect();
+            SqlConnection con = null; // dc.getConnect();
             SqlCommand cmd = new SqlCommand(sql, con);
             con.Open();
             cmd.Parameters.AddWithValue("@TenLoaiTuyen", TenLoaiTuyen);
@@ -425,7 +425,7 @@ namespace Tour
         {
             DateTime date = new DateTime();
             string sql = "SELECT ThoiGianKhoiHanh FROM ChuyenDuLich WHERE MaChuyen = @MaChuyen";
-            SqlConnection con = dc.getConnect();
+            SqlConnection con = null; // dc.getConnect();
             try
             {
                 SqlCommand cmd = new SqlCommand(sql, con);

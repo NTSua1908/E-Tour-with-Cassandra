@@ -1,0 +1,37 @@
+﻿CREATE KEYSPACE TourManagement WITH replication = {'class':'SimpleStrategy', 'replication_factor' : 3};
+use TourManagement;
+
+create table User( Email text, Password text, Ho text, Ten text, SDT text, Primary key((Email, Password)));
+create table Tuyen( MaTuyen uuid, TenTuyen text, XuatPhat text, DiaDiem text, ThoiGianToChuc timestamp, MaLoaiTuyen text, Primary key ((MaTuyen, MaLoaiTuyen), ThoiGianToChuc));
+create table LoaiTuyen( MaLoaiTuyen text, TenLoaiTuyen text, LePhiHoanTra int, Primary key (MaLoaiTuyen));
+create table ChuyenDuLich(MaChuyen uuid, MaTuyen uuid, ThoiGianKhoiHanh timestamp, PhuongTien text, SoLuongveMax int,MaLoaiChuyen text , Primary key ((MaChuyen, MaLoaiChuyen), ThoiGianKhoiHanh));
+create table LoaiChuyen( MaLoaiChuyen text, TenLoaiChuyen text, TienHoanTra float, Primary key (MaLoaiChuyen));
+create table PhieuDatCho( MaPhieu int, MaChuyen text, Primary key (MaChuyen, MaPhieu));
+create table Ve( MaVe int, MaPhieu int, GiaVe int, MaDuKhach uuid, Primary key ((MaVe, MaPhieu, MaDuKhach), GiaVe));
+create table DuKhach( MaDuKhach uuid, HoTen text, DiaChi text, SDT text, MaLoaiKhach uuid, GioiTinh text, CMND_Passport text, HanPassport date, HanVisa date, Primary key (MaDuKhach, MaLoaiKhach));
+create table LoaiKhach( MaLoaiKhach text, TenLoaiKhach text, Primary key (MaLoaiKhach));
+
+//Password: 123
+Insert into TourManagement.User (Email, Password, Ho, Ten, SDT)
+values('19522003@gm.uit.edu.vn','ICy5YqxZB1uWSwcVLSNLcA==','Vo','Phat','090432');
+Insert into TourManagement.User (Email, Password, Ho, Ten, SDT)
+values('19522144@gm.uit.edu.vn','ICy5YqxZB1uWSwcVLSNLcA==','Nguyen','Sua','090432');
+Insert into TourManagement.User (Email, Password, Ho, Ten, SDT)
+values('19522335@gm.uit.edu.vn','ICy5YqxZB1uWSwcVLSNLcA==','Hoang','Tien','090432');
+Insert into TourManagement.User (Email, Password, Ho, Ten, SDT)
+values('19522519@gm.uit.edu.vn','ICy5YqxZB1uWSwcVLSNLcA==','Vo','Viet','090432');
+
+Insert into TourManagement.LoaiKhach(MaLoaiKhach, TenLoaiKhach)
+values ('CUS001', 'Domestic');
+Insert into TourManagement.LoaiKhach(MaLoaiKhach, TenLoaiKhach)
+values ('CUS002', 'Foreign');
+
+Insert into TourManagement.LoaiTuyen(MaLoaituyen, TenLoaiTuyen, LePhiHoanTra)
+values ('ROUTE01', 'National', 100000);
+Insert into TourManagement.LoaiTuyen(MaLoaiTuyen, TenLoaiTuyen, LePhiHoanTra)
+values ('ROUTE02', 'International', 1150000);
+
+Insert into TourManagement.Loaichuyen(MaLoaiChuyen, TenLoaiChuyen, TienHoanTra)
+values ('TOUR01', 'Regular', 1);
+Insert into TourManagement.LoaiChuyen(MaLoaiChuyen, TenLoaiChuyen, TienHoanTra)
+values ('TOUR02', 'Promotional', 0.8); 

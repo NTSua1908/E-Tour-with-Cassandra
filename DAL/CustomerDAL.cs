@@ -15,13 +15,13 @@ namespace Tour
         SqlCommand cmd;
         public CustomerDAL()
         {
-            dc = new DataConnection();
+            //dc = new DataConnection();
         }
 
         public bool InsertForeign(Customer cus, ref String MaDuKhach)
         {
             string sql = "INSERT INTO DuKhach(HoTen, DiaChi, SDT, MaLoaiKhach, GioiTinh, CMND_Passport, HanPassport, HanVisa ) VALUES (@HoTen, @DiaChi, @SDT, @MaLoaiKhach, @GioiTinh, @CMND_Passport,@HanPassport, @HanVisa) SELECT SCOPE_IDENTITY()";
-            SqlConnection con = dc.getConnect();
+            SqlConnection con = null; // dc.getConnect();
             try
             {
                 cmd = new SqlCommand(sql, con);
@@ -51,7 +51,7 @@ namespace Tour
         public bool InsertDomestic(Customer cus, ref String MaDuKhach)
         {
             string sql = "INSERT INTO DuKhach(HoTen, DiaChi, SDT, MaLoaiKhach, GioiTinh, CMND_Passport) VALUES ( @HoTen, @DiaChi, @SDT, @MaLoaiKhach, @GioiTinh, @CMND_Passport) SELECT SCOPE_IDENTITY()";
-            SqlConnection con = dc.getConnect();
+            SqlConnection con = null; // dc.getConnect();
             cmd = new SqlCommand(sql, con);
             con.Open();
             cmd.Parameters.AddWithValue("@HoTen", cus.HoTen);
@@ -74,7 +74,7 @@ namespace Tour
         {
 
             string sql = " UPDATE DuKhach SET  HoTen = @HoTen, DiaChi = @DiaChi, SDT = @SDT, MaLoaiKhach = @MaLoaiKhach, GioiTinh = @GioiTinh, CMND_Passport = @CMND_Passport WHERE MaDuKhach = @MaDuKhach";
-            SqlConnection con = dc.getConnect();
+            SqlConnection con = null; // dc.getConnect();
             try
             {
                 cmd = new SqlCommand(sql, con);
@@ -98,7 +98,7 @@ namespace Tour
         public bool Delete(Customer cus)
         {
             string sql = "DELETE DuKhach WHERE MaDuKhach = @MaDuKhach";
-            SqlConnection con = dc.getConnect();
+            SqlConnection con = null; // dc.getConnect();
             try
             {
                 cmd = new SqlCommand(sql, con);

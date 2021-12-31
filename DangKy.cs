@@ -16,7 +16,7 @@ namespace Tour
         CustomerDAL cusDAL = new CustomerDAL();
         ticketDAL tkDAL = new ticketDAL();
         ReservationDAL resDAL = new ReservationDAL();
-        DataConnection dc = new DataConnection();
+        DataConnection dc;// = new DataConnection();
 
         String NameOfRouteType;
         System.Text.RegularExpressions.Regex rEMail = new System.Text.RegularExpressions.Regex(@"^([a-zA-Z0-9_\-])([a-zA-Z0-9_\-\.]*)@(\[((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.){3}|((([a-zA-Z0-9\-]+)\.)+))([a-zA-Z]{2,}|(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\])$");
@@ -259,7 +259,7 @@ namespace Tour
 
         private void LoadCombobox(ComboBox cb)
         {
-            SqlConnection con = dc.getConnect();
+            SqlConnection con = null;// dc.getConnect();
             con.Open();
             SqlCommand cmd = new SqlCommand("Select MaChuyen From ChuyenDuLich", con);
             SqlDataAdapter da = new SqlDataAdapter(cmd);
@@ -274,7 +274,7 @@ namespace Tour
         private void cbDes_SelectedValueChanged(object sender, EventArgs e)
         {
             string sql = "SELECT ChuyenDuLich.PhuongTien, ThoiGianKhoiHanh, TenLoaiTuyen, ThoiGianToChuc, GiaVe FROM ((ChuyenDuLich INNER JOIN Tuyen ON ChuyenDuLich.MaTuyen = Tuyen.MaTuyen) INNER JOIN LoaiTuyen ON Tuyen.MaLoaiTuyen = LoaiTuyen.MaLoaiTuyen)  WHERE MaChuyen = @MaChuyen";
-            SqlConnection con = dc.getConnect();
+            SqlConnection con = null;// dc.getConnect();
             SqlCommand cmd = new SqlCommand(sql, con);
             con.Open();
             cmd.Parameters.AddWithValue("@MaChuyen", cbDes.Text);
@@ -308,7 +308,7 @@ namespace Tour
         {
             int max = 0;
             string sql = "SELECT SoLuongVeMax FROM ChuyenDuLich WHERE MaChuyen = @MaChuyen";
-            SqlConnection con = dc.getConnect();
+            SqlConnection con = null;// dc.getConnect();
             SqlCommand cmd = new SqlCommand(sql, con);
             con.Open();
             cmd.Parameters.AddWithValue("@MaChuyen", MaChuyen);
@@ -324,7 +324,7 @@ namespace Tour
         {
             int  count = 0;
             string sql = "SELECT COUNT(*) FROM PhieuDatCho WHERE MaChuyen = @MaChuyen";
-            SqlConnection con = dc.getConnect();
+            SqlConnection con = null;// dc.getConnect();
             SqlCommand cmd = new SqlCommand(sql, con);
             con.Open();
             cmd.Parameters.AddWithValue("@MaChuyen", MaChuyen);
@@ -398,7 +398,7 @@ namespace Tour
         {
             DateTime date = new DateTime();
             string sql = "SELECT ThoiGianKhoiHanh FROM ChuyenDuLich WHERE MaChuyen = @MaChuyen";
-            SqlConnection con = dc.getConnect();
+            SqlConnection con = null; // dc.getConnect();
             SqlCommand cmd = new SqlCommand(sql, con);
             con.Open();
             cmd.Parameters.AddWithValue("@MaChuyen", MaChuyen);

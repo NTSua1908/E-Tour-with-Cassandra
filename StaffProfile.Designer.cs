@@ -71,8 +71,8 @@
             // txbGmail
             // 
             this.txbGmail.BackColor = System.Drawing.Color.White;
-            this.txbGmail.Font = new System.Drawing.Font("Times New Roman", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txbGmail.ForeColor = System.Drawing.Color.Orange;
+            this.txbGmail.Font = new System.Drawing.Font("Times New Roman", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txbGmail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
             this.txbGmail.Location = new System.Drawing.Point(222, 108);
             this.txbGmail.Name = "txbGmail";
             this.txbGmail.ReadOnly = true;
@@ -82,8 +82,8 @@
             // txbSDT
             // 
             this.txbSDT.BackColor = System.Drawing.Color.White;
-            this.txbSDT.Font = new System.Drawing.Font("Times New Roman", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txbSDT.ForeColor = System.Drawing.Color.Orange;
+            this.txbSDT.Font = new System.Drawing.Font("Times New Roman", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txbSDT.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
             this.txbSDT.Location = new System.Drawing.Point(222, 310);
             this.txbSDT.MaxLength = 20;
             this.txbSDT.Name = "txbSDT";
@@ -94,8 +94,8 @@
             // txbTen
             // 
             this.txbTen.BackColor = System.Drawing.Color.White;
-            this.txbTen.Font = new System.Drawing.Font("Times New Roman", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txbTen.ForeColor = System.Drawing.Color.Orange;
+            this.txbTen.Font = new System.Drawing.Font("Times New Roman", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txbTen.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
             this.txbTen.Location = new System.Drawing.Point(222, 243);
             this.txbTen.Name = "txbTen";
             this.txbTen.ReadOnly = true;
@@ -105,8 +105,8 @@
             // txbHo
             // 
             this.txbHo.BackColor = System.Drawing.Color.White;
-            this.txbHo.Font = new System.Drawing.Font("Times New Roman", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txbHo.ForeColor = System.Drawing.Color.Orange;
+            this.txbHo.Font = new System.Drawing.Font("Times New Roman", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txbHo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
             this.txbHo.Location = new System.Drawing.Point(222, 170);
             this.txbHo.Name = "txbHo";
             this.txbHo.ReadOnly = true;

@@ -14,12 +14,12 @@ namespace Tour
         SqlCommand cmd;
         public ReservationDAL()
         {
-            dc = new DataConnection();
+            //dc = new DataConnection();
         }
         public bool Insert(Reservation res, ref String MaPhieu)
         {
             string sql = "INSERT INTO PhieuDatCho(MaChuyen) VALUES (@MaChuyen) SELECT SCOPE_IDENTITY()";
-            SqlConnection con = dc.getConnect();
+            SqlConnection con = null;// dc.getConnect();
             try
             {
                 cmd = new SqlCommand(sql, con);
@@ -42,7 +42,7 @@ namespace Tour
         public bool Delete(Reservation res)
         {
             string sql = "DELETE PhieuDatCho WHERE MaPhieu = @MaPhieu";
-            SqlConnection con = dc.getConnect();
+            SqlConnection con = null;// dc.getConnect();
             try
             {
                 cmd = new SqlCommand(sql, con);

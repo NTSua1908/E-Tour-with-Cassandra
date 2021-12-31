@@ -17,18 +17,18 @@ namespace Tour
         SqlDataAdapter da;    
         public ChuyenDAL()
         {
-            dc = new DataConnection();
+            //dc = new DataConnection();
         }
         public bool LoadComboBox(ComboBox cb)
         {
-            SqlConnection con = dc.getConnect();
-            con.Open();
-            SqlCommand cmd = new SqlCommand("Select MaTuyen From Tuyen",con);
+            //SqlConnection con;// = dc.getConnect();
+            //con.Open();
+            //SqlCommand cmd = new SqlCommand("Select MaTuyen From Tuyen",con);
             SqlDataAdapter da = new SqlDataAdapter(cmd);
             DataSet ds = new DataSet();
             da.Fill(ds);
             cmd.ExecuteNonQuery();
-            con.Close();
+            //con.Close();
             cb.DataSource = ds.Tables[0];
             cb.DisplayMember = "MaTuyen";
             return true;
@@ -36,18 +36,18 @@ namespace Tour
         public DataTable getAllChuyen()
         {
             string sql = "Select ID, MaTuyen, MaChuyen, ThoiGianKhoiHanh, TenLoaiChuyen, PhuongTien, SoLuongVeMax, GiaVe FROM ChuyenDuLich inner join LoaiChuyen on ChuyenDuLich.MaLoaiChuyen = LoaiChuyen.MaLoaiChuyen";
-            SqlConnection con = dc.getConnect();
-            da = new SqlDataAdapter(sql, con);
-            con.Open();
+            //SqlConnection con = dc.getConnect();
+            //da = new SqlDataAdapter(sql, con);
+            //con.Open();
             DataTable dt = new DataTable();
             da.Fill(dt);
-            con.Close();
+            //con.Close();
             return dt;
         }
         public bool InsertChuyen(tblChuyen route)
         {
             string sql = "Insert into ChuyenDuLich(MaTuyen, MaChuyen, ThoiGianKhoiHanh, MaLoaiChuyen,PhuongTien,SoLuongVeMax, GiaVe) values(@MaTuyen, @MaChuyen, @ThoiGianKhoiHanh, @MaLoaiChuyen,@PhuongTien,@SoLuongVeMax,@GiaVe)";
-            SqlConnection con = dc.getConnect();
+            SqlConnection con = null;// = dc.getConnect();
             try
             {
                 cmd = new SqlCommand(sql, con);
@@ -71,7 +71,7 @@ namespace Tour
         public bool UpdateChuyen(tblChuyen route)
         {
             string sql = "Update ChuyenDuLich set MaTuyen=@MaTuyen,MaChuyen=@MaChuyen, ThoiGianKhoiHanh=@ThoiGianKhoiHanh, MaLoaiChuyen=@MaLoaiChuyen,PhuongTien=@PhuongTien,SoLuongVeMax=@SoLuongVeMax,GiaVe=@GiaVe where ID=@ID";
-            SqlConnection con = dc.getConnect();
+            SqlConnection con = null;// dc.getConnect();
             try
             {
                 cmd = new SqlCommand(sql, con);
@@ -96,7 +96,7 @@ namespace Tour
         public bool DeleteChuyen(tblChuyen route)
         {
             string sql = "Delete ChuyenDuLich where ID=@ID";
-            SqlConnection con = dc.getConnect();
+            SqlConnection con = null;// dc.getConnect();
             try
             {
                 cmd = new SqlCommand(sql, con);
@@ -114,7 +114,7 @@ namespace Tour
         public DataTable FindChuyen(string route)
         {
             string sql = "Select ID, MaTuyen, MaChuyen, ThoiGianKhoiHanh, TenLoaiChuyen, PhuongTien, SoLuongVeMax, GiaVe FROM ChuyenDuLich inner join LoaiChuyen on ChuyenDuLich.MaLoaiChuyen = LoaiChuyen.MaLoaiChuyen where MaChuyen like N'%" + route + "%'OR MaTuyen like N'%" + route + "%'";
-            SqlConnection con = dc.getConnect();
+            SqlConnection con = null;//dc.getConnect();
             da = new SqlDataAdapter(sql, con);
             con.Open();
             DataTable dt = new DataTable();

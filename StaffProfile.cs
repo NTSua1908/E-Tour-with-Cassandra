@@ -12,11 +12,16 @@ using System.Windows.Forms;
 using System.Net;
 using System.Net.Mail;
 using System.Data.SqlClient;
+using System.Security.Cryptography;
+using Cassandra;
+using Tour.Model;
 
 namespace Tour
 {
     public partial class StaffProfile : Form
     {
+        private Func<Row, User> UserSelector;
+
         public StaffProfile()
         {
             InitializeComponent();
@@ -24,27 +29,39 @@ namespace Tour
 
         private void StaffProfile_Load(object sender, EventArgs e)
         {
+            UserSelector = delegate (Row r)
+            {
+                User _user = new User
+                {
+                    Ho = r.GetValue<string>("ho"),
+                    Ten = r.GetValue<string>("ten"),
+                    Phone = r.GetValue<string>("sdt")
+                };
+                return _user;
+            };
+
             if (Properties.Settings.Default.UserName != string.Empty)
             {
                 txbGmail.Text = Properties.Settings.Default.UserName;
             }
-            SqlConnection con = new SqlConnection("Data Source=DESKTOP-CI36P6F;Initial Catalog=TourManagement;Integrated Security=True");
-            con.Open();
-            SqlCommand cmd = new SqlCommand("Select Ho,Ten,SĐT from UserID where Email=@Email", con);
-            cmd.Parameters.Add("@Email", txbGmail.Text);
-            SqlDataReader da = cmd.ExecuteReader();
-            while (da.Read())
-            {
-                txbHo.Text = da.GetValue(0).ToString();
-                txbTen.Text = da.GetValue(1).ToString();
-                txbSDT.Text = da.GetValue(2).ToString();
-            }
-            con.Close();
+
+            var ps = DataConnection.Ins.session.Prepare("Select Ho,Ten,SDT from User where Email=? and Password=?");
+            var statement = ps.Bind(Properties.Settings.Default.UserName, LoginForm.Encrypt(Properties.Settings.Default.Password));
+
+            //MessageBox.Show(Properties.Settings.Default.UserName + " " + )
+
+            User user = DataConnection.Ins.session.Execute(statement)
+                .Select(UserSelector).FirstOrDefault();
+
+            txbTen.Text = user.Ten;
+            txbHo.Text = user.Ho;
+            txbSDT.Text = user.Phone;
         }
 
         private void backbtn_Click(object sender, EventArgs e)
         {
             this.Close();
         }
+
     }
 }

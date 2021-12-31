@@ -17,7 +17,7 @@ namespace Tour
         String conStr = "Data Source= DESKTOP-CI36P6F; Initial Catalog = TourManagement; Integrated Security = True";
         public typeCustomerDAL()
         {
-            dc = new DataConnection();
+            //dc = new DataConnection();
         }
 
         public bool Insert(typeCustomer tpcus)

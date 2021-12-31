@@ -17,14 +17,14 @@ namespace Tour
         String conStr = "Data Source= DESKTOP-CI36P6F; Initial Catalog = TourManagement; Integrated Security = True";
         public ticketDAL()
         {
-            dc = new DataConnection();
+            //dc = new DataConnection();
         }
 
         public bool Insert(tblTicket tk, ref String MaVe)
         {
             string sql = "INSERT INTO Ve(MaPhieu, GiaVe, MaDuKhach) VALUES ( @MaPhieu, @GiaVe, @MaDuKhach) SELECT SCOPE_IDENTITY()";
             //SqlConnection con = new  SqlConnection(conStr);
-            SqlConnection con = dc.getConnect();
+            SqlConnection con = null;// dc.getConnect();
             try
             {
                 cmd = new SqlCommand(sql, con);
@@ -47,7 +47,7 @@ namespace Tour
         public bool Update(tblTicket tk)
         {
             string sql = "UPDATE Ve SET MaPhieu = @MaPhieu, GiaVe = @GiaVe, MaDuKhach = @MaDuKhach WHERE MaVe = @MaVe";
-            SqlConnection con = dc.getConnect();
+            SqlConnection con = null; // dc.getConnect();
             try
             {
                 cmd = new SqlCommand(sql, con);
@@ -68,7 +68,7 @@ namespace Tour
         public bool Delete(tblTicket tk)
         {
             string sql = "DELETE Ve WHERE MaVe = @MaVe";
-            SqlConnection con = dc.getConnect();
+            SqlConnection con = null; // dc.getConnect();
             try
             {
                 cmd = new SqlCommand(sql, con);
