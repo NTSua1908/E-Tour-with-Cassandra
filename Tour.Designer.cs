@@ -296,6 +296,7 @@
             this.tb_idtrip.Location = new System.Drawing.Point(128, 82);
             this.tb_idtrip.MaxLength = 15;
             this.tb_idtrip.Name = "tb_idtrip";
+            this.tb_idtrip.ReadOnly = true;
             this.tb_idtrip.Size = new System.Drawing.Size(249, 26);
             this.tb_idtrip.TabIndex = 1;
             this.tb_idtrip.Enter += new System.EventHandler(this.tb_idtrip_Enter);
@@ -350,7 +351,43 @@
             "20",
             "21",
             "22",
-            "23"});
+            "23",
+            "24",
+            "25",
+            "26",
+            "27",
+            "28",
+            "29",
+            "30",
+            "31",
+            "32",
+            "33",
+            "34",
+            "35",
+            "36",
+            "37",
+            "38",
+            "39",
+            "40",
+            "41",
+            "42",
+            "43",
+            "44",
+            "45",
+            "46",
+            "47",
+            "48",
+            "49",
+            "50",
+            "51",
+            "52",
+            "53",
+            "54",
+            "55",
+            "56",
+            "57",
+            "58",
+            "59"});
             this.cbMinute.Location = new System.Drawing.Point(-2, -2);
             this.cbMinute.Name = "cbMinute";
             this.cbMinute.Size = new System.Drawing.Size(43, 27);
@@ -535,9 +572,9 @@
             this.lb_idtour.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lb_idtour.Location = new System.Drawing.Point(7, 41);
             this.lb_idtour.Name = "lb_idtour";
-            this.lb_idtour.Size = new System.Drawing.Size(65, 19);
+            this.lb_idtour.Size = new System.Drawing.Size(86, 19);
             this.lb_idtour.TabIndex = 0;
-            this.lb_idtour.Text = "Route ID";
+            this.lb_idtour.Text = "Route Name";
             // 
             // btn_add
             // 

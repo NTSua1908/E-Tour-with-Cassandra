@@ -14,13 +14,12 @@ namespace Tour
     public partial class Route : Form
     {
         TuyenBLL bllTuyen;
-        int id;
         public Route()
         {
             InitializeComponent();
             bllTuyen = new TuyenBLL();
             searchtxb.ForeColor = Color.LightGray;
-            searchtxb.Text = "Enter Route ID or Route Name to search";
+            searchtxb.Text = "Enter Route Name to search";
             this.searchtxb.Leave += new System.EventHandler(this.textBox1_Leave);
             this.searchtxb.Enter += new System.EventHandler(this.textBox1_Enter);
         }
@@ -29,13 +28,13 @@ namespace Tour
             if (searchtxb.Text == "")
             {
                 searchtxb.ForeColor = Color.LightGray;
-                searchtxb.Text = "Enter Route ID or Route Name to search";
+                searchtxb.Text = "Enter Route Name to search";
             }
         }
 
         private void textBox1_Enter(object sender, EventArgs e)
         {
-            if (searchtxb.Text == "Enter Route ID or Route Name to search")
+            if (searchtxb.Text == "Enter Route Name to search")
             {
                 searchtxb.Text = "";
                 searchtxb.ForeColor = Color.Black;
@@ -44,8 +43,7 @@ namespace Tour
         //Load Tuyến lên datagridview
         public void ShowAllTuyen()
         {
-            DataTable dt = bllTuyen.getAllTuyen();
-            dataGridView1.DataSource = dt;
+            dataGridView1.DataSource = bllTuyen.getAllTuyen();
         }
         private void TOUR_Load(object sender, EventArgs e)
         {
@@ -107,7 +105,6 @@ namespace Tour
             if (CheckData() == true)
             {
                 tblTuyen route = new tblTuyen();
-                route.MaTuyen = IDtxb.Text;
                 route.TenTuyen = tNametxb.Text;
                 route.XuatPhat = DLtxb.Text;
                 route.DiaDiem = Destxb.Text;
@@ -115,8 +112,13 @@ namespace Tour
                 if (rdbNational.Checked == true)
                 {
                     route.MaLoaiTuyen = "ROUTE01";
+                    route.TenLoaiTuyen = "National";
                 }
-                else route.MaLoaiTuyen = "ROUTE02";
+                else 
+                { 
+                    route.MaLoaiTuyen = "ROUTE02";
+                    route.TenLoaiTuyen = "International";
+                }
                 if (bllTuyen.InsertTuyen(route))
                 {
                     ShowAllTuyen();
@@ -133,8 +135,7 @@ namespace Tour
             if (CheckData() == true)
             {
                 tblTuyen route = new tblTuyen();
-                route.ID = id;
-                route.MaTuyen = IDtxb.Text;
+                route.MaTuyen = Guid.Parse(IDtxb.Text);
                 route.TenTuyen = tNametxb.Text;
                 route.XuatPhat = DLtxb.Text;
                 route.DiaDiem = Destxb.Text;
@@ -142,8 +143,13 @@ namespace Tour
                 if (rdbNational.Checked == true)
                 {
                     route.MaLoaiTuyen = "ROUTE01";
+                    route.TenLoaiTuyen = "National";
                 }
-                else route.MaLoaiTuyen = "ROUTE02";
+                else
+                {
+                    route.MaLoaiTuyen = "ROUTE02";
+                    route.TenLoaiTuyen = "International";
+                }
                 if (bllTuyen.UpdateTuyen(route))
                 {
                     ShowAllTuyen();
@@ -160,7 +166,7 @@ namespace Tour
             if (MessageBox.Show("Are you sure to delete this?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
             {
                 tblTuyen route = new tblTuyen();
-                route.ID = id;
+                route.MaTuyen = Guid.Parse(IDtxb.Text);
                 if (bllTuyen.DeleteTuyen(route))
                 {
                     ShowAllTuyen();
@@ -181,9 +187,10 @@ namespace Tour
             int start = 0, end;
             int index = e.RowIndex;
             string date, temp;
+            Guid id;
             if (index >= 0)
             {
-                id = Int32.Parse(dataGridView1.Rows[index].Cells["stt"].Value.ToString());
+                //id = Guid.Parse(dataGridView1.Rows[index].Cells["stt"].Value.ToString());
                 IDtxb.Text = dataGridView1.Rows[index].Cells["MaTuyen"].Value.ToString();
                 tNametxb.Text = dataGridView1.Rows[index].Cells["TenTuyen"].Value.ToString();
                 DLtxb.Text = dataGridView1.Rows[index].Cells["XuatPhat"].Value.ToString();
@@ -208,10 +215,9 @@ namespace Tour
         private void searchtxb_TextChanged(object sender, EventArgs e)
         {
             string value = searchtxb.Text;
-            if (!string.IsNullOrEmpty(value))
+            if (!string.IsNullOrEmpty(value) && value != "Enter Route Name to search")
             {
-                DataTable dt = bllTuyen.FindTuyen(value);
-                dataGridView1.DataSource = dt;
+                dataGridView1.DataSource = bllTuyen.FindTuyen(value);
             }
             else { ShowAllTuyen(); }
         }

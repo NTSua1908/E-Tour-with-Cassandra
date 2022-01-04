@@ -8,15 +8,16 @@ namespace Tour
 {
     class tblChuyen
     {
-        public string identify { set; get; }
-       
-        public string MaTuyen { set; get; }
-        public string MaChuyen { set; get; }
-        public DateTime ThoiGianKhoiHanh { set; get; }
+        public Guid MaTuyen { set; get; }
+        public Guid MaChuyen { set; get; }
+        public string MaChuyenSearch { set; get; }
+        public string TenTuyen { set; get; }
         public string MaLoaiChuyen { set; get; }
-        public float TienHoanTra { set; get; }
+        public string TenLoaiChuyen { set; get; }
+        public DateTime ThoiGianKhoiHanh { set; get; }
+        public decimal TienHoanTra { set; get; }
         public string PhuongTien { set; get; }
         public int SoLuongVeMax { set; get; }
-        public float GiaVe { set; get; }
+        public decimal GiaVe { set; get; }
     }
 }

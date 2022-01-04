@@ -19,43 +19,30 @@ namespace Tour
         string randomcode;
         public static string to;
         System.Text.RegularExpressions.Regex rEMail = new System.Text.RegularExpressions.Regex(@"^([a-zA-Z0-9_\-])([a-zA-Z0-9_\-\.]*)@(\[((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.){3}|((([a-zA-Z0-9\-]+)\.)+))([a-zA-Z]{2,}|(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\])$");
-        string connectionString = @"Data Source=DESKTOP-CI36P6F;Initial Catalog=TourManagement;Integrated Security=True";
         public RegisterAccount()
         {
             InitializeComponent();
         }
-        static string Encrypt(string value)
-        {
-            using (MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider())
-            {
-                UTF8Encoding utf8 = new UTF8Encoding();
-                byte[] data = md5.ComputeHash(utf8.GetBytes(value));
-                return Convert.ToBase64String(data);
-            }
-        }
+
         bool CheckDuplicateEmail(string email)
         {
-            SqlConnection con = new SqlConnection(connectionString);
-            con.Open();
-            SqlCommand cmd = new SqlCommand("select count(*) from UserID where Email=@Email", con);
-            cmd.Connection = con;
-            cmd.CommandType = System.Data.CommandType.Text;
-            cmd.Parameters.AddWithValue("@email", email);
-            int numrecord = (int)cmd.ExecuteScalar();
-            if (numrecord > 0)
+            string query = "select * from User where Email='" + email + "'";
+            Cassandra.RowSet row = DataConnection.Ins.session.Execute(query);
+
+            if (row.FirstOrDefault() != null)
                 return false;
             return true;
         }
 
         private void SignUpbtn_Click(object sender, EventArgs e)
         {
-            string sql = "Insert into UserID(Ho,Ten,Email,Password,SĐT) values(@Ho,@Ten,@Email,@Password,@SĐT)";
-            SqlConnection sqlCon;
+            var sql = DataConnection.Ins.session.Prepare("Insert into User(Ho,Ten,SDT,Email,Password) values(?,?,?,?,?)");
+            
             if (CheckDuplicateEmail(txbGmail.Text) == false)
             {
                 MessageBox.Show("Your Email is already in use");
             }
-            else if (txbGmail.Text == "")
+            else if (txbGmail.Text == "" || txbHo.Text == "" || txbTen.Text == "" || txbSDT.Text == "" )
             {
                 MessageBox.Show("Please enter FULL INFORMATION!!!");
             }
@@ -69,23 +56,15 @@ namespace Tour
             }
             else
             {
-                using (sqlCon = new SqlConnection(connectionString))
-                {
-                    label12.Text = "Checked";
-                    label12.ForeColor = Color.Green;
-                    SignUpbtn.Enabled = true;
-                    SqlCommand sqlCmd = new SqlCommand(sql, sqlCon);
-                    sqlCon.Open();
-                    sqlCmd.Parameters.AddWithValue("@Ho", txbHo.Text.Trim());
-                    sqlCmd.Parameters.AddWithValue("@Ten", txbTen.Text.Trim());
-                    sqlCmd.Parameters.AddWithValue("@SĐT", txbSDT.Text.Trim());
-                    sqlCmd.Parameters.AddWithValue("@Email", txbGmail.Text.Trim());
-                    sqlCmd.Parameters.AddWithValue("@Password", Encrypt(txbPass.Text.Trim()));
-                    sqlCmd.ExecuteNonQuery();
-                    //sqlCon.Close();
-                    MessageBox.Show("SignUp success!!!");
-                    Clear();
-                }
+                var query = sql.Bind(txbHo.Text.Trim(), txbTen.Text.Trim(), txbSDT.Text.Trim(), email, LoginForm.Encrypt(txbPass.Text.Trim()));
+                DataConnection.Ins.session.Execute(query);
+
+                label12.Text = "Checked";
+                label12.ForeColor = Color.Green;
+                SignUpbtn.Enabled = true;
+
+                MessageBox.Show("SignUp success!!!");
+                Clear();
             }
         }
         void Clear()
@@ -147,6 +126,7 @@ namespace Tour
                     {
                         smtp.Send(message);
                         MessageBox.Show("Code send success!!!");
+                        label12.Text = "";
                     }
                     catch (Exception ex)
                     {

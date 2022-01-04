@@ -86,7 +86,26 @@ namespace Tour
             {
                 image = 0;
             }
-            pictureBox1.ImageLocation = string.Format(@"Images\{0}.jpg", image);
+            
+            switch(image)
+            {
+                case 0:
+                    picBackground.Image = Properties.Resources._0;
+                    break;
+                case 1:
+                    picBackground.Image = Properties.Resources._1;
+                    break;
+                case 2:
+                    picBackground.Image = Properties.Resources._2;
+                    break;
+                case 3:
+                    picBackground.Image = Properties.Resources._3;
+                    break;
+                case 4:
+                    picBackground.Image = Properties.Resources._4;
+                    break;
+            }
+
             image++;
         }
         private void timer1_Tick(object sender, EventArgs e)

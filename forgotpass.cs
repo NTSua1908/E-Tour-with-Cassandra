@@ -17,7 +17,6 @@ namespace Tour
     {
         string randomcode;
         public static string to;
-        public static string connectionString = @"Data Source=DESKTOP-CI36P6F;Initial Catalog=TourManagement;Integrated Security=True";
         System.Text.RegularExpressions.Regex rEMail = new System.Text.RegularExpressions.Regex(@"^([a-zA-Z0-9_\-])([a-zA-Z0-9_\-\.]*)@(\[((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.){3}|((([a-zA-Z0-9\-]+)\.)+))([a-zA-Z]{2,}|(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\])$");
         public forgotpass()
         {
@@ -46,12 +45,11 @@ namespace Tour
         }
         private void sendbtn_Click(object sender, EventArgs e)
         {
-            SqlConnection sqlc = new SqlConnection(connectionString);
-            string query = "Select * from UserID Where Email ='" + emailtxb.Text.Trim() + "'";
-            SqlDataAdapter sda = new SqlDataAdapter(query, sqlc);
-            DataTable dttb = new DataTable();
-            sda.Fill(dttb);
-            if (dttb.Rows.Count == 1)
+            string query = "Select * from User Where Email ='" + emailtxb.Text.Trim() + "'";
+
+            Cassandra.RowSet row = DataConnection.Ins.session.Execute(query);
+
+            if (row.FirstOrDefault() != null)
             {
                 string from, pass, messageBody;
                 Random random = new Random();
@@ -94,7 +92,6 @@ namespace Tour
                 ChangePass change = new ChangePass();
                 this.Close();
                 change.ShowDialog();
-                this.Show();
             }
             else
             {

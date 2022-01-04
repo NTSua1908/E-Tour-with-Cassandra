@@ -305,6 +305,7 @@
             this.IDtxb.Location = new System.Drawing.Point(121, 36);
             this.IDtxb.MaxLength = 20;
             this.IDtxb.Name = "IDtxb";
+            this.IDtxb.ReadOnly = true;
             this.IDtxb.Size = new System.Drawing.Size(242, 26);
             this.IDtxb.TabIndex = 7;
             this.IDtxb.Enter += new System.EventHandler(this.IDtxb_Enter);

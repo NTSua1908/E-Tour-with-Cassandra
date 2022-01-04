@@ -2,16 +2,26 @@
 use TourManagement;
 
 create table User( Email text, Password text, Ho text, Ten text, SDT text, Primary key((Email, Password)));
-create table Tuyen( MaTuyen uuid, TenTuyen text, XuatPhat text, DiaDiem text, ThoiGianToChuc timestamp, MaLoaiTuyen text, Primary key ((MaTuyen, MaLoaiTuyen), ThoiGianToChuc));
+
+create table Tuyen( MaTuyen uuid, TenTuyen text, XuatPhat text, DiaDiem text, ThoiGianToChuc text, MaLoaiTuyen text, TenLoaiTuyen text, Primary key (MaTuyen));
+
 create table LoaiTuyen( MaLoaiTuyen text, TenLoaiTuyen text, LePhiHoanTra int, Primary key (MaLoaiTuyen));
-create table ChuyenDuLich(MaChuyen uuid, MaTuyen uuid, ThoiGianKhoiHanh timestamp, PhuongTien text, SoLuongveMax int,MaLoaiChuyen text , Primary key ((MaChuyen, MaLoaiChuyen), ThoiGianKhoiHanh));
-create table LoaiChuyen( MaLoaiChuyen text, TenLoaiChuyen text, TienHoanTra float, Primary key (MaLoaiChuyen));
-create table PhieuDatCho( MaPhieu int, MaChuyen text, Primary key (MaChuyen, MaPhieu));
-create table Ve( MaVe int, MaPhieu int, GiaVe int, MaDuKhach uuid, Primary key ((MaVe, MaPhieu, MaDuKhach), GiaVe));
+
+create table ChuyenDuLich(MaChuyen uuid, MaChuyenSearch text, MaTuyen uuid, TenTuyen text, ThoiGianKhoiHanh timestamp, PhuongTien text, SoLuongveMax int, GiaVe decimal, MaLoaiChuyen text , TenLoaiChuyen text, Primary key (MaChuyen));
+
+create table LoaiChuyen( MaLoaiChuyen text, TenLoaiChuyen text, TienHoanTra decimal, Primary key (MaLoaiChuyen));
+
+create table PhieuDatCho( MaPhieu uuid, MaChuyen text, Primary key (MaChuyen, MaPhieu));
+
+create table Ve( MaVe uuid, MaPhieu uuid, GiaVe decimal, MaDuKhach uuid, HoTen text, DiaChi text, SDT text, GioiTinh text, CMND_Passport text, TenLoaiKhach text, HanPassport date, HanVisa date, MaChuyen uuid, TenLoaiTuyen text, TenLoaiChuyen text, LePhiHoanTra int, TienHoanTra decimal, Primary key ((MaPhieu, MaDuKhach), MaVe));
+
 create table DuKhach( MaDuKhach uuid, HoTen text, DiaChi text, SDT text, MaLoaiKhach uuid, GioiTinh text, CMND_Passport text, HanPassport date, HanVisa date, Primary key (MaDuKhach, MaLoaiKhach));
+
 create table LoaiKhach( MaLoaiKhach text, TenLoaiKhach text, Primary key (MaLoaiKhach));
 
-//Password: 123
+CREATE CUSTOM INDEX  fn_TenTuyen ON Tuyen (TenTuyen) USING 'org.apache.cassandra.index.sasi.SASIIndex' WITH OPTIONS={'mode':'CONTAINS'};
+CREATE CUSTOM INDEX  fn_MaChuyen ON ChuyenDuLich (MaChuyenSearch) USING 'org.apache.cassandra.index.sasi.SASIIndex' WITH OPTIONS={'mode':'CONTAINS'};
+--Password: 123
 Insert into TourManagement.User (Email, Password, Ho, Ten, SDT)
 values('19522003@gm.uit.edu.vn','ICy5YqxZB1uWSwcVLSNLcA==','Vo','Phat','090432');
 Insert into TourManagement.User (Email, Password, Ho, Ten, SDT)
@@ -35,3 +45,9 @@ Insert into TourManagement.Loaichuyen(MaLoaiChuyen, TenLoaiChuyen, TienHoanTra)
 values ('TOUR01', 'Regular', 1);
 Insert into TourManagement.LoaiChuyen(MaLoaiChuyen, TenLoaiChuyen, TienHoanTra)
 values ('TOUR02', 'Promotional', 0.8); 
+
+Insert into Tuyen (MaTuyen, TenTuyen, XuatPhat, DiaDiem, ThoiGianToChuc, MaLoaiTuyen, TenLoaiTuyen)
+values (6c7f4f3e-7512-48a0-a196-f4178d63cd1a, 'Tuyen An Giang - TPHCM', 'An Giang', 'TP HCM', '3 Day 4 Night', 'ROUTE01', 'National');
+
+Insert into ChuyenDuLich(MaChuyen, MaChuyenSearch, MaTuyen, TenTuyen, ThoiGianKhoiHanh , PhuongTien, SoLuongveMax, GiaVe, MaLoaiChuyen, TenLoaiChuyen)
+values (6c7f4f3e-7512-48a0-a196-f4478d63cd1a, '6c7f4f3e-7512-48a0-a196-f4478d63cd1a', 6c7f4f3e-7512-48a0-a196-f4178d63cd1a, 'Tuyen An Giang - TPHCM', '2022-1-9', 'Xe khach', 50, 160000, 'TOUR01', 'Regular');

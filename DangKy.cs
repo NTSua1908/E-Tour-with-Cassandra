@@ -206,8 +206,8 @@ namespace Tour
                 res.MaChuyen = cbDes.Text;
                 checkRes = resDAL.Insert(res, ref MaPhieu);
 
-                tk.MaDuKhach = Int32.Parse(ID);
-                tk.MaPhieu = Int32.Parse(MaPhieu);
+                //tk.MaDuKhach = Int32.Parse(ID);
+                //tk.MaPhieu = Int32.Parse(MaPhieu);
                 tk.GiaVe = Int32.Parse(tbTotal.Text);
 
 
@@ -273,20 +273,18 @@ namespace Tour
 
         private void cbDes_SelectedValueChanged(object sender, EventArgs e)
         {
-            string sql = "SELECT ChuyenDuLich.PhuongTien, ThoiGianKhoiHanh, TenLoaiTuyen, ThoiGianToChuc, GiaVe FROM ((ChuyenDuLich INNER JOIN Tuyen ON ChuyenDuLich.MaTuyen = Tuyen.MaTuyen) INNER JOIN LoaiTuyen ON Tuyen.MaLoaiTuyen = LoaiTuyen.MaLoaiTuyen)  WHERE MaChuyen = @MaChuyen";
-            SqlConnection con = null;// dc.getConnect();
-            SqlCommand cmd = new SqlCommand(sql, con);
-            con.Open();
-            cmd.Parameters.AddWithValue("@MaChuyen", cbDes.Text);
-            SqlDataReader da = cmd.ExecuteReader();
-            while (da.Read())
-            {
-                tbVehicle.Text = da.GetValue(0).ToString();
-                tbDate.Text = da.GetValue(1).ToString();
-                NameOfRouteType = da.GetValue(2).ToString();
-                tbDuration.Text = da.GetValue(3).ToString();
-                tbPrice.Text = da.GetValue(4).ToString();
-            }
+            string query = "SELECT ChuyenDuLich.PhuongTien, ThoiGianKhoiHanh, TenLoaiTuyen, ThoiGianToChuc, GiaVe FROM ChuyenDuLich  WHERE MaChuyen = " + cbDes.Text;
+            
+
+
+            //while (da.Read())
+            //{
+            //    tbVehicle.Text = da.GetValue(0).ToString();
+            //    tbDate.Text = da.GetValue(1).ToString();
+            //    NameOfRouteType = da.GetValue(2).ToString();
+            //    tbDuration.Text = da.GetValue(3).ToString();
+            //    tbPrice.Text = da.GetValue(4).ToString();
+            //}
             Amount(cbDes.Text);     
         }
 

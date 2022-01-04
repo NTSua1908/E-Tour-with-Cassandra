@@ -71,7 +71,7 @@ namespace Tour
                 Properties.Settings.Default.Save();
             }
 
-            string query = "Select * from User Where Email ='" + emailtxb.Text.Trim() + "' and Password = '" + Encrypt(passwordtxb.Text.Trim()) + "'";
+            string query = "Select * from User Where Email ='" + emailtxb.Text.Trim() + "' and Password = '" + Encrypt(passwordtxb.Text.Trim()) + "'  ALLOW FILTERING";
 
             Cassandra.RowSet row = DataConnection.Ins.session.Execute(query);
 
@@ -107,6 +107,7 @@ namespace Tour
             forgotpass forgotpass = new forgotpass();
             this.Hide();
             forgotpass.ShowDialog();
+            this.Show();
         }
 
         private void emailtxb_Validating(object sender, CancelEventArgs e)

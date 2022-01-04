@@ -45,12 +45,11 @@ namespace Tour
                 txbGmail.Text = Properties.Settings.Default.UserName;
             }
 
-            var ps = DataConnection.Ins.session.Prepare("Select Ho,Ten,SDT from User where Email=? and Password=?");
-            var statement = ps.Bind(Properties.Settings.Default.UserName, LoginForm.Encrypt(Properties.Settings.Default.Password));
+            string query = "Select Ho,Ten,SDT from User where Email='" + Properties.Settings.Default.UserName + "'";
 
             //MessageBox.Show(Properties.Settings.Default.UserName + " " + )
 
-            User user = DataConnection.Ins.session.Execute(statement)
+            User user = DataConnection.Ins.session.Execute(query)
                 .Select(UserSelector).FirstOrDefault();
 
             txbTen.Text = user.Ten;

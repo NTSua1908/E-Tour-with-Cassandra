@@ -6,44 +6,48 @@ using System.Threading.Tasks;
 using System.Data.Sql;
 using System.Data;
 using System.Data.SqlClient;
+using Cassandra;
+
 namespace Tour
 {
     class TuyenDAL
     {
-        DataConnection dc;
-        SqlCommand cmd;
-        SqlDataAdapter da;
+        Func<Row, tblTuyen> TuyenSelector;
+
         public TuyenDAL()
         {
-            //dc = new DataConnection();
+            TuyenSelector = delegate (Row r)
+            {
+                tblTuyen tuyen = new tblTuyen
+                {
+                    MaTuyen = r.GetValue<Guid>("matuyen"),
+                    DiaDiem = r.GetValue<string>("diadiem"),
+                    XuatPhat = r.GetValue<string>("xuatphat"),
+                    TenTuyen = r.GetValue<string>("tentuyen"),
+                    MaLoaiTuyen = r.GetValue<string>("maloaituyen"),
+                    TenLoaiTuyen = r.GetValue<string>("tenloaituyen"),
+                    ThoiGianToChuc = r.GetValue<string>("thoigiantochuc")
+                };
+
+                return tuyen;
+            };
         }
-        public DataTable getAllTuyen()
+        public dynamic getAllTuyen()
         {
-            string sql = " Select ID, MaTuyen, TenTuyen, XuatPhat, DiaDiem, ThoiGianToChuc, TenLoaiTuyen from Tuyen inner join LoaiTuyen on Tuyen.MaLoaiTuyen = LoaiTuyen.MaLoaiTuyen";
-            SqlConnection con = null;// dc.getConnect();
-            da = new SqlDataAdapter(sql,con);
-            con.Open();
-            DataTable dt = new DataTable();
-            da.Fill(dt);
-            con.Close();
-            return dt;
+            string query = "Select MaTuyen, TenTuyen, XuatPhat, DiaDiem, ThoiGianToChuc, TenLoaiTuyen, MaLoaiTuyen from Tuyen";
+            var TuyenTable = DataConnection.Ins.session
+                .Execute(query)
+                .Select(TuyenSelector);
+            return TuyenTable.ToList();
         }
         public bool InsertTuyen(tblTuyen route)
         {
-            string sql = "Insert into Tuyen(MaTuyen, TenTuyen, XuatPhat, DiaDiem, MaLoaiTuyen,  ThoiGianToChuc) values(@MaTuyen,@TenTuyen, @XuatPhat, @DiaDiem, @MaLoaiTuyen, @ThoiGianToChuc)";
-            SqlConnection con = null;// dc.getConnect();
+            var query = DataConnection.Ins.session.Prepare("Insert into Tuyen (MaTuyen, TenTuyen, XuatPhat, DiaDiem, ThoiGianToChuc, MaLoaiTuyen, TenLoaiTuyen) values (?,?,?,?,?,?,?)");
             try
             {
-                cmd = new SqlCommand(sql, con);
-                con.Open();
-                cmd.Parameters.Add("@MaTuyen",SqlDbType.NVarChar).Value=route.MaTuyen;
-                cmd.Parameters.Add("@TenTuyen", SqlDbType.NVarChar).Value = route.TenTuyen;
-                cmd.Parameters.Add("@XuatPhat", SqlDbType.NVarChar).Value = route.XuatPhat;
-                cmd.Parameters.Add("@DiaDiem", SqlDbType.NVarChar).Value = route.DiaDiem;
-                cmd.Parameters.Add("@MaLoaiTuyen", SqlDbType.NVarChar).Value = route.MaLoaiTuyen;
-                cmd.Parameters.Add("@ThoiGianToChuc", SqlDbType.NVarChar).Value = route.ThoiGianToChuc;
-                cmd.ExecuteNonQuery();
-                con.Close();
+                Guid guid = Guid.NewGuid();
+                var ps = query.Bind(guid, route.TenTuyen, route.XuatPhat, route.DiaDiem, route.ThoiGianToChuc, route.MaLoaiTuyen, route.TenTuyen);
+                DataConnection.Ins.session.Execute(ps);
             }
             catch(Exception e)
             {
@@ -53,21 +57,11 @@ namespace Tour
         }
         public bool UpdateTuyen(tblTuyen route)
         {
-            string sql = "Update Tuyen set MaTuyen=@MaTuyen, TenTuyen=@TenTuyen, XuatPhat=@XuatPhat, DiaDiem=@DiaDiem, MaLoaiTuyen=@MaLoaiTuyen, ThoiGianToChuc=@ThoiGianToChuc where ID=@ID";
-            SqlConnection con = null;// dc.getConnect();
+            var query = DataConnection.Ins.session.Prepare("Update Tuyen set TenTuyen=?, XuatPhat=?, DiaDiem=?, MaLoaiTuyen=?, ThoiGianToChuc=?, TenLoaiTuyen=? where MaTuyen=?");
             try
             {
-                cmd = new SqlCommand(sql, con);
-                con.Open();
-                cmd.Parameters.Add("@ID", SqlDbType.Int).Value = route.ID;
-                cmd.Parameters.Add("@MaTuyen", SqlDbType.NVarChar).Value = route.MaTuyen;
-                cmd.Parameters.Add("@TenTuyen", SqlDbType.NVarChar).Value = route.TenTuyen;
-                cmd.Parameters.Add("@XuatPhat", SqlDbType.NVarChar).Value = route.XuatPhat;
-                cmd.Parameters.Add("@DiaDiem", SqlDbType.NVarChar).Value = route.DiaDiem;
-                cmd.Parameters.Add("@MaLoaiTuyen", SqlDbType.NVarChar).Value = route.MaLoaiTuyen;
-                cmd.Parameters.Add("@ThoiGianToChuc", SqlDbType.NVarChar).Value = route.ThoiGianToChuc;
-                cmd.ExecuteNonQuery();
-                con.Close();
+                var ps = query.Bind(route.TenTuyen, route.XuatPhat, route.DiaDiem, route.MaLoaiTuyen, route.ThoiGianToChuc, route.TenLoaiTuyen, route.MaTuyen);
+                DataConnection.Ins.session.Execute(ps);
             }
             catch (Exception e)
             {
@@ -77,15 +71,11 @@ namespace Tour
         }
         public bool DeleteTuyen(tblTuyen route)
         {
-            string sql = "Delete Tuyen where ID=@ID";
-            SqlConnection con = null; // c.getConnect();
+            string query = "Delete from Tuyen where MaTuyen = " + route.MaTuyen;
+            //DataConnection.Ins.session.Execute(query);
             try
             {
-                cmd = new SqlCommand(sql, con);
-                con.Open();
-                cmd.Parameters.Add("@ID", SqlDbType.Int).Value = route.ID;
-                cmd.ExecuteNonQuery();
-                con.Close();
+                DataConnection.Ins.session.Execute(query);
             }
             catch (Exception e)
             {
@@ -93,16 +83,14 @@ namespace Tour
             }
             return true;
         }
-        public DataTable FindTuyen(string route)
+        public dynamic FindTuyen(string route)
         {
-            string sql = "Select ID, MaTuyen, TenTuyen, XuatPhat, DiaDiem, ThoiGianToChuc, TenLoaiTuyen from Tuyen inner join LoaiTuyen on Tuyen.MaLoaiTuyen = LoaiTuyen.MaLoaiTuyen where TenTuyen like N'%" + route + "%'OR MaTuyen like N'%" + route + "%'";
-            SqlConnection con = null; // dc.getConnect();
-            da = new SqlDataAdapter(sql, con);
-            con.Open();
-            DataTable dt = new DataTable();
-            da.Fill(dt);
-            con.Close();
-            return dt;
+            string query = "Select MaTuyen, TenTuyen, XuatPhat, DiaDiem, ThoiGianToChuc, TenLoaiTuyen, MaLoaiTuyen from Tuyen where TenTuyen like '%" + route + "%'";
+
+            var TuyenTable = DataConnection.Ins.session
+                .Execute(query)
+                .Select(TuyenSelector);
+            return TuyenTable.ToList();
         }
     }
 }

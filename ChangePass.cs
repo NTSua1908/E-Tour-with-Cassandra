@@ -14,17 +14,8 @@ namespace Tour
 {
     public partial class ChangePass : Form
     {
-        public static string connectionString = @"Data Source=DESKTOP-CI36P6F;Initial Catalog=TourManagement;Integrated Security=True";
-        string email = forgotpass.to;
-        static string Encrypt(string value)
-        {
-            using (MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider())
-            {
-                UTF8Encoding utf8 = new UTF8Encoding();
-                byte[] data = md5.ComputeHash(utf8.GetBytes(value));
-                return Convert.ToBase64String(data);
-            }
-        }
+        string email = Properties.Settings.Default.UserName;
+
         public ChangePass()
         {
             InitializeComponent();
@@ -34,11 +25,7 @@ namespace Tour
         {
             if (newpasstxb.Text == confirmtxb.Text && newpasstxb.Text != "")
             {
-                SqlConnection sqlc = new SqlConnection(connectionString);
-                SqlCommand sqlCmd = new SqlCommand("UPDATE [dbo].[UserID] SET [Password] ='" + /*Encrypt(*/newpasstxb.Text/*)*/ + "' WHERE Email='" + email + "' ", sqlc);
-                sqlc.Open();
-                sqlCmd.ExecuteNonQuery();
-                sqlc.Close();
+                DataConnection.Ins.session.Execute("UPDATE User SET Password = '" + LoginForm.Encrypt(newpasstxb.Text) + "' WHERE Email = '" + email + "' ");
                 MessageBox.Show("Reset password success!!!");
                 this.Close();
             }

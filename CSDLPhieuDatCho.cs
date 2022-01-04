@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Cassandra;
 
 namespace Tour
 {
@@ -20,6 +21,9 @@ namespace Tour
         ReservationDAL resDAL = new ReservationDAL();
         DataConnection dc;
         SqlDataAdapter adapter;
+
+        Func<Row, tblTicket> TicketSelector;
+
         void Clear()
         {
             tbName.Text=tbAddress.Text = tbID.Text = tbICN.Text = tbphone.Text = tbAddress.Text = "";
@@ -38,6 +42,31 @@ namespace Tour
             tbSearchResID.Text = "Enter Tour ID to search";
             this.tbSearchResID.Leave += new System.EventHandler(this.textBox2_Leave);
             this.tbSearchResID.Enter += new System.EventHandler(this.textBox2_Enter);
+
+            TicketSelector = delegate (Row r)
+            {
+                tblTicket ticket = new tblTicket
+                {
+                    MaDuKhach = r.GetValue<Guid>("madukhach"),
+                    HanPassport = r.GetValue<DateTime>("hanpassport"),
+                    HanVisa = r.GetValue<DateTime>("hanvisa"),
+                    MaChuyen = r.GetValue<Guid>("machuyen"),
+                    TenLoaiTuyen = r.GetValue<string>("tenloaituyen"),
+                    TenLoaiChuyen = r.GetValue<string>("tenloaichuyen"),
+                    LePhiHoanTra = r.GetValue<int>("lephihoantra"),
+                    TienHoanTra = r.GetValue<decimal>("tienhoatra"),
+                    MaVe = r.GetValue<Guid>("mave"),
+                    MaPhieu = r.GetValue<Guid>("maphieu"),
+                    HoTen = r.GetValue<string>("hoten"),
+                    DiaChi = r.GetValue<string>("diachi"),
+                    SDT = r.GetValue<string>("sdt"),
+                    GioiTinh = r.GetValue<string>("gioitinh"),
+                    TenLoaiKhach = r.GetValue<string>("tenloaikhach"),
+                    CMND_Passport = r.GetValue<string>("cmnd_passport"),
+                    GiaVe = r.GetValue<decimal>("giave")
+                };
+                return ticket;
+            };
         }
         private void textBox1_Leave(object sender, EventArgs e)
         {
@@ -77,26 +106,29 @@ namespace Tour
         }
         public void ShowTicket()
         {
-            string sql = "SELECT DuKhach.MaDuKhach, HanPassport, HanVisa, PhieuDatCho.MaChuyen, TenLoaiTuyen, TenLoaiChuyen, LePhiHoanTra, TienHoanTra, MaVe, Ve.MaPhieu, HoTen, DiaChi, SDT, GioiTinh, TenLoaiKhach, CMND_Passport, Ve.GiaVe FROM(((((((Ve INNER JOIN DuKhach ON Ve.MaDuKhach = DuKhach.MaDuKhach) INNER JOIN LoaiKhach ON DuKhach.MaLoaiKhach = LoaiKhach.MaLoaiKhach)Inner Join PhieuDatCho on PhieuDatCho.MaPhieu = Ve.MaPhieu) INNER JOIN ChuyenDuLich on PhieuDatCho.MaChuyen = ChuyenDuLich.MaChuyen) INNER JOIN Loaichuyen on ChuyenDuLich.MaLoaiChuyen = Loaichuyen.MaLoaiChuyen) INNER JOIN Tuyen on ChuyenDuLich.MaTuyen = Tuyen.MaTuyen)INNER JOIN LoaiTuyen on Tuyen.MaLoaiTuyen = LoaiTuyen.MaLoaiTuyen)";
-            SqlConnection con = null;// dc.getConnect();
-            adapter = new SqlDataAdapter(sql, con);
-            con.Open();
-            DataTable dt = new DataTable();
-            adapter.Fill(dt);
-            con.Close();
-            dgvQuanLy.DataSource = dt;
+            string query = "SELECT MaDuKhach, HanPassport, HanVisa, MaChuyen, TenLoaiTuyen, TenLoaiChuyen, LePhiHoanTra, TienHoanTra, MaVe, MaPhieu, HoTen, DiaChi, SDT, GioiTinh, TenLoaiKhach, CMND_Passport, GiaVe FROM Ve";
+
+            var TicketTable = DataConnection.Ins.session.Execute(query)
+                .Select(TicketSelector);
+
+            dgvQuanLy.DataSource = TicketTable.ToList();
         }
 
         public void ShowTicketv2()
         {
-            string sql = "Select Ve.MaPhieu, HoTen from (((Ve INNER JOIN DuKhach ON Ve.MaDuKhach = DuKhach.MaDuKhach) INNER JOIN LoaiKhach ON DuKhach.MaLoaiKhach = LoaiKhach.MaLoaiKhach)Inner Join PhieuDatCho on PhieuDatCho.MaPhieu = Ve.MaPhieu)";
-            SqlConnection con = null; // dc.getConnect();
-            adapter = new SqlDataAdapter(sql, con);
-            con.Open();
-            DataTable dt = new DataTable();
-            adapter.Fill(dt);
-            con.Close();
-            dataGridView1.DataSource = dt;
+            string query = "Select MaPhieu, HoTen from ve";
+
+            var TicketTable = DataConnection.Ins.session.Execute(query)
+                .Select(TicketSelector);
+
+            //dgvQuanLy.DataSource = TicketTable.ToList();
+            //SqlConnection con = null; // dc.getConnect();
+            //adapter = new SqlDataAdapter(sql, con);
+            //con.Open();
+            //DataTable dt = new DataTable();
+            //adapter.Fill(dt);
+            //con.Close();
+            //dataGridView1.DataSource = dt;
         }
 
 
@@ -191,19 +223,19 @@ namespace Tour
         }
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            string value = tbSearchTicket.Text;
-            if (!string.IsNullOrEmpty(value))
-            {
-                string sql = "SELECT DuKhach.MaDuKhach, HanPassport, HanVisa, PhieuDatCho.MaChuyen, TenLoaiTuyen, TenLoaiChuyen, LePhiHoanTra, TienHoanTra, MaVe, Ve.MaPhieu, HoTen, DiaChi, SDT, GioiTinh, TenLoaiKhach, CMND_Passport, Ve.GiaVe FROM(((((((Ve INNER JOIN DuKhach ON Ve.MaDuKhach = DuKhach.MaDuKhach) INNER JOIN LoaiKhach ON DuKhach.MaLoaiKhach = LoaiKhach.MaLoaiKhach)Inner Join PhieuDatCho on PhieuDatCho.MaPhieu = Ve.MaPhieu) INNER JOIN ChuyenDuLich on PhieuDatCho.MaChuyen = ChuyenDuLich.MaChuyen) INNER JOIN Loaichuyen on ChuyenDuLich.MaLoaiChuyen = Loaichuyen.MaLoaiChuyen) INNER JOIN Tuyen on ChuyenDuLich.MaTuyen = Tuyen.MaTuyen)INNER JOIN LoaiTuyen on Tuyen.MaLoaiTuyen = LoaiTuyen.MaLoaiTuyen)  where PhieuDatCho.MaChuyen like N'%" + value + "%'";
-                SqlConnection con = null;// dc.getConnect();
-                adapter = new SqlDataAdapter(sql, con);
-                con.Open();
-                DataTable dt = new DataTable();
-                adapter.Fill(dt);
-                con.Close();
-                dgvQuanLy.DataSource = dt;
-            }
-            else { ShowTicket(); }
+            //string value = tbSearchTicket.Text;
+            //if (!string.IsNullOrEmpty(value))
+            //{
+            //    string sql = "SELECT DuKhach.MaDuKhach, HanPassport, HanVisa, PhieuDatCho.MaChuyen, TenLoaiTuyen, TenLoaiChuyen, LePhiHoanTra, TienHoanTra, MaVe, Ve.MaPhieu, HoTen, DiaChi, SDT, GioiTinh, TenLoaiKhach, CMND_Passport, Ve.GiaVe FROM(((((((Ve INNER JOIN DuKhach ON Ve.MaDuKhach = DuKhach.MaDuKhach) INNER JOIN LoaiKhach ON DuKhach.MaLoaiKhach = LoaiKhach.MaLoaiKhach)Inner Join PhieuDatCho on PhieuDatCho.MaPhieu = Ve.MaPhieu) INNER JOIN ChuyenDuLich on PhieuDatCho.MaChuyen = ChuyenDuLich.MaChuyen) INNER JOIN Loaichuyen on ChuyenDuLich.MaLoaiChuyen = Loaichuyen.MaLoaiChuyen) INNER JOIN Tuyen on ChuyenDuLich.MaTuyen = Tuyen.MaTuyen)INNER JOIN LoaiTuyen on Tuyen.MaLoaiTuyen = LoaiTuyen.MaLoaiTuyen)  where PhieuDatCho.MaChuyen like N'%" + value + "%'";
+            //    SqlConnection con = null;// dc.getConnect();
+            //    adapter = new SqlDataAdapter(sql, con);
+            //    con.Open();
+            //    DataTable dt = new DataTable();
+            //    adapter.Fill(dt);
+            //    con.Close();
+            //    dgvQuanLy.DataSource = dt;
+            //}
+            //else { ShowTicket(); }
         }
 
         private void textBox2_TextChanged(object sender, EventArgs e)
@@ -329,7 +361,7 @@ namespace Tour
             float result;
             float costA = 1;
             int costB = 0;
-            tk.MaVe = TicketID;
+            //tk.MaVe = TicketID;
             cus.MaDuKhach = CustomerID;
             res.MaPhieu = ReservationID;
 
@@ -376,7 +408,7 @@ namespace Tour
                 tblTicket tk = new tblTicket();
                 Customer cus = new Customer();
                 Reservation res = new Reservation();
-                tk.MaVe = TicketID;
+                //tk.MaVe = TicketID;
                 cus.MaDuKhach = CustomerID;
                 res.MaPhieu = ReservationID;
 

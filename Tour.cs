@@ -21,7 +21,7 @@ namespace Tour
             InitializeComponent();
             bllChuyen = new ChuyenBLL();
             tb_search.ForeColor = Color.LightGray;
-            tb_search.Text = "Enter Tour ID or Route ID to search";
+            tb_search.Text = "Enter Tour ID to search";
             this.tb_search.Leave += new System.EventHandler(this.textBox1_Leave);
             this.tb_search.Enter += new System.EventHandler(this.textBox1_Enter);
         }
@@ -30,13 +30,13 @@ namespace Tour
             if (tb_search.Text == "")
             {
                 tb_search.ForeColor = Color.LightGray;
-                tb_search.Text = "Enter Tour ID or Route ID to search";
+                tb_search.Text = "Enter Tour ID to search";
             }
         }
 
         private void textBox1_Enter(object sender, EventArgs e)
         {
-            if (tb_search.Text == "Enter Tour ID or Route ID to search")
+            if (tb_search.Text == "Enter Tour ID to search")
             {
                 tb_search.Text = "";
                 tb_search.ForeColor = Color.Black;
@@ -44,8 +44,7 @@ namespace Tour
         }
         public void ShowAllChuyen()
         {
-            DataTable dt = bllChuyen.getAllChuyen();
-            dgv_trip.DataSource = dt;
+            dgv_trip.DataSource = bllChuyen.getAllChuyen();
         }
         private void TRIPManageTour_Load(object sender, EventArgs e)
         {
@@ -54,16 +53,10 @@ namespace Tour
         }
         public bool CheckData()
         {
-            if (string.IsNullOrEmpty(idTuyencb.Text))
+            if (string.IsNullOrEmpty(idTuyencb.SelectedValue.ToString()))
             {
                 MessageBox.Show("Please choose the Route Code box", "Alert", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 idTuyencb.Focus();
-                return false;
-            }
-            if (string.IsNullOrEmpty(tb_idtrip.Text))
-            {
-                MessageBox.Show("Please fill the Trip ID box", "Alert", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                tb_idtrip.Focus();
                 return false;
             }
             if (string.IsNullOrEmpty(cbHour.Text))
@@ -109,10 +102,10 @@ namespace Tour
                 Minute = Int32.Parse(cbMinute.Text);
                 temp = dtpKhoiHanh.Value;
                 date = new DateTime(temp.Year, temp.Month, temp.Day, Hour, Minute, 0);
-
-                route.identify = id;
-                route.MaTuyen = idTuyencb.Text;
-                route.MaChuyen = tb_idtrip.Text;
+                route.MaTuyen = Guid.Parse(idTuyencb.SelectedValue.ToString());
+                route.MaChuyen = Guid.Parse(tb_idtrip.Text);
+                route.MaChuyenSearch = route.MaChuyen.ToString();
+                route.TenTuyen = idTuyencb.Text;
                 route.PhuongTien = cbTTransporation.Text;
                 route.ThoiGianKhoiHanh = date;
                 route.SoLuongVeMax = Int32.Parse(tbAmount.Text);
@@ -120,9 +113,13 @@ namespace Tour
                 if (rdbRegular.Checked == true)
                 {
                     route.MaLoaiChuyen = "TOUR01";
+                    route.TenLoaiChuyen = "Regular";
                 }
-                else route.MaLoaiChuyen = "TOUR02";
-
+                else
+                {
+                    route.MaLoaiChuyen = "TOUR02";
+                    route.TenLoaiChuyen = "Promotional";
+                }
                 if (bllChuyen.UpdateChuyen(route))
                 {
                     ShowAllChuyen();
@@ -150,8 +147,10 @@ namespace Tour
                 Minute = Int32.Parse(cbMinute.Text);
                 temp = dtpKhoiHanh.Value;
                 date = new DateTime(temp.Year, temp.Month, temp.Day, Hour, Minute, 0);
-                route.MaTuyen = idTuyencb.Text;
-                route.MaChuyen = tb_idtrip.Text;
+                route.MaTuyen = Guid.Parse(idTuyencb.SelectedValue.ToString());
+                route.MaChuyen = Guid.NewGuid();
+                route.MaChuyenSearch = route.MaChuyen.ToString();
+                route.TenTuyen = idTuyencb.Text;
                 route.ThoiGianKhoiHanh = date;
                 route.PhuongTien = cbTTransporation.Text;
                 route.SoLuongVeMax = Int32.Parse(tbAmount.Text);
@@ -159,8 +158,13 @@ namespace Tour
                 if (rdbRegular.Checked == true)
                 {
                     route.MaLoaiChuyen = "TOUR01";
+                    route.TenLoaiChuyen = "Regular";
                 }
-                else route.MaLoaiChuyen = "TOUR02";
+                else
+                { 
+                    route.MaLoaiChuyen = "TOUR02";
+                    route.TenLoaiChuyen = "Promotional";
+                }
                 if (bllChuyen.InsertChuyen(route))
                 {
                     ShowAllChuyen();
@@ -176,7 +180,7 @@ namespace Tour
             if (MessageBox.Show("Are you sure to delete this?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
             {
                 tblChuyen route = new tblChuyen();
-                route.identify = id;
+                route.MaChuyen = Guid.Parse(tb_idtrip.Text);
                 if (bllChuyen.DeleteChuyen(route))
                 {
                     ShowAllChuyen();
@@ -194,8 +198,8 @@ namespace Tour
             string kind;
             if (index >= 0)
             {
-                id = dgv_trip.Rows[index].Cells["identify"].Value.ToString();
-                idTuyencb.Text = dgv_trip.Rows[index].Cells["MaTuyen"].Value.ToString();
+                id = dgv_trip.Rows[index].Cells["MaTuyen"].Value.ToString();
+                idTuyencb.Text = dgv_trip.Rows[index].Cells["TenTuyen"].Value.ToString();
                 tb_idtrip.Text = dgv_trip.Rows[index].Cells["MaChuyen"].Value.ToString();
                 cbTTransporation.Text = dgv_trip.Rows[index].Cells["PhuongTien"].Value.ToString();
                 Time = Convert.ToDateTime(dgv_trip.Rows[index].Cells["ThoiGianKhoiHanh"].Value.ToString());
@@ -215,10 +219,9 @@ namespace Tour
         private void tb_search_TextChanged_1(object sender, EventArgs e)
         {
             string value = tb_search.Text;
-            if (!string.IsNullOrEmpty(value))
+            if (!string.IsNullOrEmpty(value) && value != "Enter Tour ID to search")
             {
-                DataTable dt = bllChuyen.FindChuyen(value);
-                dgv_trip.DataSource = dt;
+                dgv_trip.DataSource = bllChuyen.FindChuyen(value);
             }
             else { ShowAllChuyen(); }
         }

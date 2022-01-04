@@ -19,11 +19,11 @@ namespace Tour
         {
             return dalChuyen.LoadComboBox(cb);
         }
-        public DataTable getAllChuyen()
+        public dynamic getAllChuyen()
         {
             return dalChuyen.getAllChuyen();
         }
-        public DataTable FindChuyen(string route)
+        public dynamic FindChuyen(string route)
         {
             return dalChuyen.FindChuyen(route);
         }

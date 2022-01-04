@@ -14,11 +14,11 @@ namespace Tour
         {
             dalTuyen = new TuyenDAL();
         }
-        public DataTable getAllTuyen()
+        public dynamic getAllTuyen()
         {
             return dalTuyen.getAllTuyen();
         }
-        public DataTable FindTuyen(string route)
+        public dynamic FindTuyen(string route)
         {
             return dalTuyen.FindTuyen(route);
         }
