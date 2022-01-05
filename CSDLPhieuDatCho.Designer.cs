@@ -72,7 +72,10 @@ namespace Tour
             this.rdbFemale = new System.Windows.Forms.RadioButton();
             this.rdbMale = new System.Windows.Forms.RadioButton();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.dgvDatCho = new System.Windows.Forms.DataGridView();
+            this.MaPhieu = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ten = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ID = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tbSearchTicket = new System.Windows.Forms.TextBox();
             this.tbSearchResID = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
@@ -84,16 +87,13 @@ namespace Tour
             this.panelTime = new System.Windows.Forms.Panel();
             this.label12 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
-            this.MaPhieu = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ten = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ID = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Information.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvQuanLy)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel1.SuspendLayout();
             this.groupBox2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvDatCho)).BeginInit();
             this.panelTime.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -588,7 +588,7 @@ namespace Tour
             // groupBox2
             // 
             this.groupBox2.BackColor = System.Drawing.Color.Transparent;
-            this.groupBox2.Controls.Add(this.dataGridView1);
+            this.groupBox2.Controls.Add(this.dgvDatCho);
             this.groupBox2.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox2.Location = new System.Drawing.Point(9, 150);
             this.groupBox2.Margin = new System.Windows.Forms.Padding(2);
@@ -599,23 +599,50 @@ namespace Tour
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Reservations";
             // 
-            // dataGridView1
+            // dgvDatCho
             // 
-            this.dataGridView1.AllowUserToAddRows = false;
-            this.dataGridView1.BackgroundColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.dgvDatCho.AllowUserToAddRows = false;
+            this.dgvDatCho.BackgroundColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.dgvDatCho.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvDatCho.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.MaPhieu,
             this.ten,
             this.ID});
-            this.dataGridView1.Location = new System.Drawing.Point(5, 18);
-            this.dataGridView1.Margin = new System.Windows.Forms.Padding(2);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.ReadOnly = true;
-            this.dataGridView1.RowHeadersWidth = 51;
-            this.dataGridView1.RowTemplate.Height = 24;
-            this.dataGridView1.Size = new System.Drawing.Size(304, 184);
-            this.dataGridView1.TabIndex = 0;
+            this.dgvDatCho.Location = new System.Drawing.Point(5, 18);
+            this.dgvDatCho.Margin = new System.Windows.Forms.Padding(2);
+            this.dgvDatCho.Name = "dgvDatCho";
+            this.dgvDatCho.ReadOnly = true;
+            this.dgvDatCho.RowHeadersWidth = 51;
+            this.dgvDatCho.RowTemplate.Height = 24;
+            this.dgvDatCho.Size = new System.Drawing.Size(304, 184);
+            this.dgvDatCho.TabIndex = 0;
+            // 
+            // MaPhieu
+            // 
+            this.MaPhieu.DataPropertyName = "MaPhieu";
+            this.MaPhieu.HeaderText = "Reservation ID";
+            this.MaPhieu.MinimumWidth = 6;
+            this.MaPhieu.Name = "MaPhieu";
+            this.MaPhieu.ReadOnly = true;
+            this.MaPhieu.Width = 125;
+            // 
+            // ten
+            // 
+            this.ten.DataPropertyName = "HoTen";
+            this.ten.HeaderText = "Name";
+            this.ten.MinimumWidth = 6;
+            this.ten.Name = "ten";
+            this.ten.ReadOnly = true;
+            this.ten.Width = 125;
+            // 
+            // ID
+            // 
+            this.ID.DataPropertyName = "MaChuyen";
+            this.ID.HeaderText = "Tour ID";
+            this.ID.MinimumWidth = 6;
+            this.ID.Name = "ID";
+            this.ID.ReadOnly = true;
+            this.ID.Width = 125;
             // 
             // tbSearchTicket
             // 
@@ -722,7 +749,7 @@ namespace Tour
             // 
             this.label12.AutoSize = true;
             this.label12.Font = new System.Drawing.Font("Times New Roman", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label12.Location = new System.Drawing.Point(2, 34);
+            this.label12.Location = new System.Drawing.Point(2, 5);
             this.label12.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(61, 17);
@@ -734,39 +761,12 @@ namespace Tour
             // 
             this.label8.AutoSize = true;
             this.label8.Font = new System.Drawing.Font("Times New Roman", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label8.Location = new System.Drawing.Point(0, 2);
+            this.label8.Location = new System.Drawing.Point(1, 35);
             this.label8.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(63, 17);
             this.label8.TabIndex = 23;
             this.label8.Text = "Pass Exp";
-            // 
-            // MaPhieu
-            // 
-            this.MaPhieu.DataPropertyName = "MaPhieu";
-            this.MaPhieu.HeaderText = "Reservation ID";
-            this.MaPhieu.MinimumWidth = 6;
-            this.MaPhieu.Name = "MaPhieu";
-            this.MaPhieu.ReadOnly = true;
-            this.MaPhieu.Width = 125;
-            // 
-            // ten
-            // 
-            this.ten.DataPropertyName = "HoTen";
-            this.ten.HeaderText = "Name";
-            this.ten.MinimumWidth = 6;
-            this.ten.Name = "ten";
-            this.ten.ReadOnly = true;
-            this.ten.Width = 125;
-            // 
-            // ID
-            // 
-            this.ID.DataPropertyName = "MaChuyen";
-            this.ID.HeaderText = "Tour ID";
-            this.ID.MinimumWidth = 6;
-            this.ID.Name = "ID";
-            this.ID.ReadOnly = true;
-            this.ID.Width = 125;
             // 
             // CSDLPhieuDatCho
             // 
@@ -786,6 +786,7 @@ namespace Tour
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.Information);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "CSDLPhieuDatCho";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -800,7 +801,7 @@ namespace Tour
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvDatCho)).EndInit();
             this.panelTime.ResumeLayout(false);
             this.panelTime.PerformLayout();
             this.ResumeLayout(false);
@@ -831,7 +832,7 @@ namespace Tour
         private System.Windows.Forms.RadioButton rdbDomestic;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.DataGridView dgvDatCho;
         private System.Windows.Forms.Button btnDel;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox tbSearchTicket;

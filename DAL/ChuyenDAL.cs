@@ -75,6 +75,17 @@ namespace Tour
                 .Select(ChuyenSelector);
             return ChuyenTable.ToList();
         }
+
+        public tblChuyen getChuyen(Guid id)
+        {
+            string query = "Select * FROM ChuyenDuLich WHERE MaChuyen = " + id;
+
+            tblChuyen chuyen = DataConnection.Ins.session.Execute(query)
+                .Select(ChuyenSelector)
+                .FirstOrDefault();
+            return chuyen;
+        }
+
         public bool InsertChuyen(tblChuyen route)
         {
             var ps = DataConnection.Ins.session.Prepare("Insert into ChuyenDuLich(MaTuyen, MaChuyen, MaChuyenSearch, TenTuyen, ThoiGianKhoiHanh, MaLoaiChuyen,PhuongTien,SoLuongVeMax, GiaVe, TenLoaiChuyen) values(?,?,?,?,?,?,?,?,?,?)");

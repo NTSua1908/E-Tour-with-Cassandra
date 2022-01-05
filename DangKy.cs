@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Cassandra;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -18,7 +19,10 @@ namespace Tour
         ReservationDAL resDAL = new ReservationDAL();
         DataConnection dc;// = new DataConnection();
 
-        String NameOfRouteType;
+        tblChuyen chuyen;
+        decimal TienHoanTra;
+        int LePhiHoanTra;
+        string ThoiGianToChuc;
         System.Text.RegularExpressions.Regex rEMail = new System.Text.RegularExpressions.Regex(@"^([a-zA-Z0-9_\-])([a-zA-Z0-9_\-\.]*)@(\[((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.){3}|((([a-zA-Z0-9\-]+)\.)+))([a-zA-Z]{2,}|(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\])$");
         public DangKy()
         {
@@ -125,13 +129,13 @@ namespace Tour
             DateTime current = DateTime.Now;
             TimeSpan Interval = date.Subtract(current);
 
-            if (NameOfRouteType == "National" && Interval.Days < 1)
+            if (chuyen.TenLoaiChuyen == "National" && Interval.Days < 1)
             {
                 MessageBox.Show("Ticket purchase deadline exceeded", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
 
-            else if(NameOfRouteType =="International" && Interval.Days < 7)
+            else if(chuyen.TenLoaiChuyen =="International" && Interval.Days < 7)
             {
                 MessageBox.Show("Ticket purchase deadline exceeded", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
@@ -159,7 +163,7 @@ namespace Tour
 
         private void btCreate_Click(object sender, EventArgs e)
         {
-            string ID = "", MaVe = "", MaPhieu = "";
+            string MaVe = "", MaPhieu = "";
             tblTicket tk = new tblTicket();
             Customer cus = new Customer();
             Reservation res = new Reservation();
@@ -188,6 +192,7 @@ namespace Tour
 
             if (CheckData())
             {
+                cus.MaDuKhach = Guid.NewGuid();
                 cus.HoTen = tbSurname.Text + " " + tbName.Text;
                 cus.DiaChi = tbAddress.Text;
                 cus.SDT = tbTelephone.Text;
@@ -199,19 +204,37 @@ namespace Tour
 
                 if (RdForeign.Checked == true)
                 {
-                    checkCus = cusDAL.InsertForeign(cus, ref ID);
+                    checkCus = cusDAL.InsertForeign(cus);
                 }
-                else checkCus = cusDAL.InsertDomestic(cus, ref ID);
+                else checkCus = cusDAL.InsertDomestic(cus);
 
-                res.MaChuyen = cbDes.Text;
-                checkRes = resDAL.Insert(res, ref MaPhieu);
+                res.MaChuyen = Guid.Parse(cbDes.Text);
+                res.MaPhieu = Guid.NewGuid();
+                //MaPhieu = res.MaPhieu.ToString();
+                checkRes = resDAL.Insert(res);
 
-                //tk.MaDuKhach = Int32.Parse(ID);
-                //tk.MaPhieu = Int32.Parse(MaPhieu);
-                tk.GiaVe = Int32.Parse(tbTotal.Text);
+                tk.MaVe = Guid.NewGuid();
+                tk.MaDuKhach = cus.MaDuKhach;
+                tk.MaPhieu = res.MaPhieu;
+                tk.GiaVe = Decimal.Parse(tbTotal.Text);
+                tk.HoTen = cus.HoTen;
+                tk.DiaChi = cus.DiaChi;
+                tk.SDT = cus.SDT;
+                tk.CMND_Passport = cus.CMND_Passport;
+                tk.HanPassport = cus.HanPassport;
+                tk.HanVisa = cus.HanVisa;
+                tk.GioiTinh = cus.GioiTinh;
+                tk.TenLoaiChuyen = chuyen.TenLoaiChuyen;
+                tk.TenLoaiKhach = Tourist;
+                tk.TenLoaiTuyen = chuyen.TenLoaiChuyen;
+                tk.TienHoanTra = TienHoanTra;
+
+                tk.LePhiHoanTra = LePhiHoanTra;
+                tk.MaChuyen = chuyen.MaChuyen;
+                tk.MaChuyenSearch = tk.MaChuyen.ToString();
 
 
-                if (checkCus && tkDAL.Insert(tk, ref MaVe) && checkRes)
+                if (checkCus && tkDAL.Insert(tk) && checkRes)
                 {
                     MessageBox.Show("Successfull add", "information", MessageBoxButtons.OK);
                 }
@@ -247,7 +270,7 @@ namespace Tour
                     + "\n----------------------------------------------------------------------------------------"
                     + "\n\n\t       Thanks for Using \n\t       Travel Management System"
                     );
-                Clear();
+                //Clear();
             }
         }
         private void btnGo_Click(object sender, EventArgs e)
@@ -259,33 +282,67 @@ namespace Tour
 
         private void LoadCombobox(ComboBox cb)
         {
-            SqlConnection con = null;// dc.getConnect();
-            con.Open();
-            SqlCommand cmd = new SqlCommand("Select MaChuyen From ChuyenDuLich", con);
-            SqlDataAdapter da = new SqlDataAdapter(cmd);
-            DataSet ds = new DataSet();
-            da.Fill(ds);
-            cmd.ExecuteNonQuery();
-            con.Close();
-            cb.DataSource = ds.Tables[0];
+            Func<Row, tblChuyen> ChuyenSelector = delegate (Row r)
+            {
+                tblChuyen chuyen = new tblChuyen
+                {
+                    MaChuyen = r.GetValue<Guid>("machuyen")
+                };
+                return chuyen;
+            };
+            string query = "Select MaChuyen From ChuyenDuLich";
+            var ChuyenTable = DataConnection.Ins.session.Execute(query)
+                .Select(ChuyenSelector);
             cb.DisplayMember = "MaChuyen";
+            cb.DataSource = ChuyenTable.ToList();
         }
 
         private void cbDes_SelectedValueChanged(object sender, EventArgs e)
         {
-            string query = "SELECT ChuyenDuLich.PhuongTien, ThoiGianKhoiHanh, TenLoaiTuyen, ThoiGianToChuc, GiaVe FROM ChuyenDuLich  WHERE MaChuyen = " + cbDes.Text;
-            
+            //MessageBox.Show(cbDes.)
+            ChuyenDAL chuyenDAL = new ChuyenDAL();
+            chuyen = chuyenDAL.getChuyen(Guid.Parse(cbDes.Text));
+
+            Func<Row, decimal> hoanTra = delegate (Row r)
+            {
+                return r.GetValue<decimal>("tienhoantra");
+            };
+            TienHoanTra = DataConnection.Ins.session.Execute("Select TienHoanTra from LoaiChuyen where MaLoaiChuyen = '" + chuyen.MaLoaiChuyen + "'")
+                .Select(hoanTra)
+                .FirstOrDefault();
 
 
-            //while (da.Read())
-            //{
-            //    tbVehicle.Text = da.GetValue(0).ToString();
-            //    tbDate.Text = da.GetValue(1).ToString();
-            //    NameOfRouteType = da.GetValue(2).ToString();
-            //    tbDuration.Text = da.GetValue(3).ToString();
-            //    tbPrice.Text = da.GetValue(4).ToString();
-            //}
-            Amount(cbDes.Text);     
+            Func<Row, string> MaLoaiTuyenSelector = delegate (Row r)
+            {
+                return r.GetValue<string>("maloaituyen");
+            };
+            string MaLoaiTuyen = DataConnection.Ins.session.Execute("Select MaLoaiTuyen from Tuyen where MaTuyen = " + chuyen.MaTuyen)
+                .Select(MaLoaiTuyenSelector)
+                .FirstOrDefault();
+
+            Func<Row, int> lephi = delegate (Row r)
+            {
+                return r.GetValue<int>("lephihoantra");
+            };
+            TienHoanTra = DataConnection.Ins.session.Execute("Select LePhiHoanTra from LoaiTuyen where MaLoaiTuyen = '" + MaLoaiTuyen  + "'")
+                .Select(lephi)
+                .FirstOrDefault();
+
+            tbVehicle.Text = chuyen.PhuongTien;
+            tbDate.Text = chuyen.ThoiGianKhoiHanh.ToString();
+
+            Func<Row, string> thoigian = delegate (Row r)
+            {
+                return r.GetValue<string>("thoigiantochuc");
+            };
+
+            ThoiGianToChuc = DataConnection.Ins.session.Execute("Select ThoiGianToChuc from Tuyen where MaTuyen = " + chuyen.MaTuyen)
+                .Select(thoigian)
+                .FirstOrDefault();
+
+            tbDuration.Text = ThoiGianToChuc;
+            tbPrice.Text = chuyen.GiaVe.ToString();
+            Amount(cbDes.Text);
         }
 
         private void backtotourbtn_Click(object sender, EventArgs e)
@@ -304,35 +361,14 @@ namespace Tour
 
         private int GetMax(string MaChuyen)
         {
-            int max = 0;
-            string sql = "SELECT SoLuongVeMax FROM ChuyenDuLich WHERE MaChuyen = @MaChuyen";
-            SqlConnection con = null;// dc.getConnect();
-            SqlCommand cmd = new SqlCommand(sql, con);
-            con.Open();
-            cmd.Parameters.AddWithValue("@MaChuyen", MaChuyen);
-            SqlDataReader da = cmd.ExecuteReader();
-            while (da.Read())
-            {
-                max = da.GetInt32(0);
-
-            }
-            return max;
+            return chuyen.SoLuongVeMax;
         }
         private int GetCount(string MaChuyen)
         {
-            int  count = 0;
-            string sql = "SELECT COUNT(*) FROM PhieuDatCho WHERE MaChuyen = @MaChuyen";
-            SqlConnection con = null;// dc.getConnect();
-            SqlCommand cmd = new SqlCommand(sql, con);
-            con.Open();
-            cmd.Parameters.AddWithValue("@MaChuyen", MaChuyen);
-            SqlDataReader dat = cmd.ExecuteReader();
-            while (dat.Read())
-            {
-                count = dat.GetInt32(0);
+            string query = "SELECT COUNT(*) FROM PhieuDatCho WHERE MaChuyen = " + Guid.Parse(MaChuyen);
+            var count = DataConnection.Ins.session.Execute(query);
 
-            }
-            return count;
+            return count.Count();
         }
         void Clear()
         {
@@ -373,11 +409,11 @@ namespace Tour
             DateTime current = DateTime.Now;
             DateTime date = GetTime(cbDes.Text);
             TimeSpan interval = date - current;
-            if (interval.Days >= 3 && NameOfRouteType == "National")
+            if (interval.Days >= 3 && chuyen.TenLoaiChuyen == "National")
             {
                 tbDiscount.Text = ((Int32.Parse(tbPrice.Text) * 20) / 100).ToString();
             }
-            else if (interval.Days >= 10 && NameOfRouteType == "International")
+            else if (interval.Days >= 10 && chuyen.TenLoaiChuyen == "International")
             {
                 tbDiscount.Text = ((Int32.Parse(tbPrice.Text) * 20) / 100).ToString();
             }
@@ -394,18 +430,7 @@ namespace Tour
 
         public DateTime GetTime(string MaChuyen)
         {
-            DateTime date = new DateTime();
-            string sql = "SELECT ThoiGianKhoiHanh FROM ChuyenDuLich WHERE MaChuyen = @MaChuyen";
-            SqlConnection con = null; // dc.getConnect();
-            SqlCommand cmd = new SqlCommand(sql, con);
-            con.Open();
-            cmd.Parameters.AddWithValue("@MaChuyen", MaChuyen);
-            SqlDataReader da = cmd.ExecuteReader();
-            while (da.Read())
-            {
-                date = da.GetDateTime(0);
-            }
-            return date;
+            return chuyen.ThoiGianKhoiHanh;
         }
         private void tbSurname_KeyPress(object sender, KeyPressEventArgs e)
         {

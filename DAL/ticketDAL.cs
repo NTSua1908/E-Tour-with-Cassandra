@@ -10,54 +10,27 @@ namespace Tour
 {
     class ticketDAL
     {
-
-        DataConnection dc;
-        SqlCommand cmd;
-        //String conStr = "Data Source= DESKTOP-QLEJV95\\SQLEXPRESS; Initial Catalog=TourManagement; Integrated Security=True";
-        String conStr = "Data Source= DESKTOP-CI36P6F; Initial Catalog = TourManagement; Integrated Security = True";
-        public ticketDAL()
+        public bool Insert(tblTicket tk)
         {
-            //dc = new DataConnection();
-        }
-
-        public bool Insert(tblTicket tk, ref String MaVe)
-        {
-            string sql = "INSERT INTO Ve(MaPhieu, GiaVe, MaDuKhach) VALUES ( @MaPhieu, @GiaVe, @MaDuKhach) SELECT SCOPE_IDENTITY()";
-            //SqlConnection con = new  SqlConnection(conStr);
-            SqlConnection con = null;// dc.getConnect();
+            var ps = DataConnection.Ins.session.Prepare("INSERT INTO Ve (MaVe, MaPhieu, GiaVe, MaDuKhach, HoTen, DiaChi, SDT, GioiTinh, CMND_Passport, TenLoaiKhach, HanPassport, HanVisa, MaChuyen, TenLoaiTuyen, TenLoaiChuyen, LePhiHoanTra, TienHoanTra, MaChuyenSearch) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, ?)");
             try
             {
-                cmd = new SqlCommand(sql, con);
-                con.Open();
-                cmd.Parameters.AddWithValue("@MaPhieu", tk.MaPhieu);
-                cmd.Parameters.AddWithValue("@GiaVe", tk.GiaVe);
-                cmd.Parameters.AddWithValue("@MaDuKhach", tk.MaDuKhach);
-
-                SqlDataAdapter adapter = new SqlDataAdapter(cmd);
-                DataTable table = new DataTable();
-                adapter.Fill(table);
-                MaVe = table.Rows[0][0].ToString();
-                con.Close();
+                var query = ps.Bind(tk.MaVe, tk.MaPhieu, tk.GiaVe, tk.MaDuKhach, tk.HoTen, tk.DiaChi, tk.SDT, tk.GioiTinh, tk.CMND_Passport, tk.TenLoaiKhach, tk.HanPassport, tk.HanVisa, tk.MaChuyen, tk.TenLoaiTuyen, tk.TenLoaiChuyen, tk.LePhiHoanTra, tk.TienHoanTra, tk.MaChuyenSearch);
+                DataConnection.Ins.session.Execute(query);
             }
             catch (Exception e)
             {
                 return false;
-            } return true;
+            } 
+            return true;
         }
         public bool Update(tblTicket tk)
         {
-            string sql = "UPDATE Ve SET MaPhieu = @MaPhieu, GiaVe = @GiaVe, MaDuKhach = @MaDuKhach WHERE MaVe = @MaVe";
-            SqlConnection con = null; // dc.getConnect();
+            var ps = DataConnection.Ins.session.Prepare("UPDATE Ve SET GiaVe=?, HoTen=?, DiaChi=?, SDT=?, GioiTinh=?, CMND_Passport=?, TenLoaiKhach=?, HanPassport=?, HanVisa=?, MaChuyen=?, MaChuyenSearch=?, TenLoaiTuyen=?, TenLoaiChuyen=?, LePhiHoanTra=?, TienHoanTra=? WHERE MaVe=? and MaPhieu=? and MaDuKhach=?");
             try
             {
-                cmd = new SqlCommand(sql, con);
-                con.Open();
-                cmd.Parameters.Add("@MaVe", SqlDbType.NVarChar).Value = tk.MaVe;
-                cmd.Parameters.Add("@MaPhieu", SqlDbType.NVarChar).Value = tk.MaPhieu;
-                cmd.Parameters.Add("@GiaVe", SqlDbType.Money).Value = tk.GiaVe;
-                cmd.Parameters.Add("@MaDuKhach", SqlDbType.NVarChar).Value = tk.MaDuKhach;
-                cmd.ExecuteNonQuery();
-                con.Close();
+                var query = ps.Bind(tk.GiaVe, tk.HoTen, tk.DiaChi, tk.SDT, tk.GioiTinh, tk.CMND_Passport, tk.TenLoaiKhach, tk.HanPassport, tk.HanVisa, tk.MaChuyen, tk.MaChuyenSearch, tk.TenLoaiTuyen, tk.TenLoaiChuyen, tk.LePhiHoanTra, tk.TienHoanTra, tk.MaVe, tk.MaPhieu, tk.MaDuKhach);
+                DataConnection.Ins.session.Execute(query);
             }
             catch (Exception e)
             {
@@ -65,17 +38,30 @@ namespace Tour
             }
             return true;
         }
-        public bool Delete(tblTicket tk)
+
+        public bool UpdateCustomerInTicket(Customer cus, Guid MaVe, Guid MaPhieu)
         {
-            string sql = "DELETE Ve WHERE MaVe = @MaVe";
-            SqlConnection con = null; // dc.getConnect();
+            var ps = DataConnection.Ins.session.Prepare("UPDATE Ve SET HoTen=?, DiaChi=?, SDT=?, GioiTinh=?, CMND_Passport=?, HanPassport=?, HanVisa=? WHERE MaVe=? and MaPhieu=? and MaDuKhach=?");
             try
             {
-                cmd = new SqlCommand(sql, con);
-                con.Open();
-                cmd.Parameters.Add("@MaVe", SqlDbType.NVarChar).Value = tk.MaVe;
-                cmd.ExecuteNonQuery();
-                con.Close();
+                var query = ps.Bind(cus.HoTen, cus.DiaChi, cus.SDT, cus.GioiTinh, cus.CMND_Passport, cus.HanPassport, cus.HanVisa, MaVe, MaPhieu, cus.MaDuKhach);
+                DataConnection.Ins.session.Execute(query);
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public bool Delete(tblTicket tk)
+        {
+            var ps = DataConnection.Ins.session.Prepare("DELETE from Ve WHERE MaVe=? and MaPhieu=? and MaDuKhach=?");
+            try
+            {
+                var query = ps.Bind(tk.MaVe, tk.MaPhieu, tk.MaDuKhach);
+                DataConnection.Ins.session.Execute(query);
+
             }
             catch (Exception e)
             {

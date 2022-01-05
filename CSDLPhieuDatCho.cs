@@ -23,6 +23,7 @@ namespace Tour
         SqlDataAdapter adapter;
 
         Func<Row, tblTicket> TicketSelector;
+        Func<Row, tblTicket> TicketSelectorV2;
 
         void Clear()
         {
@@ -31,18 +32,6 @@ namespace Tour
         }
         public CSDLPhieuDatCho()
         {
-            //dc = new DataConnection();
-            InitializeComponent();
-            tkDAL = new ticketDAL();
-            tbSearchTicket.ForeColor = Color.LightGray;
-            tbSearchTicket.Text = "Enter Tour ID to search";
-            this.tbSearchTicket.Leave += new System.EventHandler(this.textBox1_Leave);
-            this.tbSearchTicket.Enter += new System.EventHandler(this.textBox1_Enter);
-            tbSearchResID.ForeColor = Color.LightGray;
-            tbSearchResID.Text = "Enter Tour ID to search";
-            this.tbSearchResID.Leave += new System.EventHandler(this.textBox2_Leave);
-            this.tbSearchResID.Enter += new System.EventHandler(this.textBox2_Enter);
-
             TicketSelector = delegate (Row r)
             {
                 tblTicket ticket = new tblTicket
@@ -54,7 +43,7 @@ namespace Tour
                     TenLoaiTuyen = r.GetValue<string>("tenloaituyen"),
                     TenLoaiChuyen = r.GetValue<string>("tenloaichuyen"),
                     LePhiHoanTra = r.GetValue<int>("lephihoantra"),
-                    TienHoanTra = r.GetValue<decimal>("tienhoatra"),
+                    TienHoanTra = r.GetValue<decimal>("tienhoantra"),
                     MaVe = r.GetValue<Guid>("mave"),
                     MaPhieu = r.GetValue<Guid>("maphieu"),
                     HoTen = r.GetValue<string>("hoten"),
@@ -67,6 +56,27 @@ namespace Tour
                 };
                 return ticket;
             };
+
+            TicketSelectorV2 = delegate (Row r)
+            {
+                tblTicket ticket = new tblTicket
+                {
+                    MaPhieu = r.GetValue<Guid>("maphieu"),
+                    HoTen = r.GetValue<string>("hoten"),
+                };
+                return ticket;
+            };
+
+            InitializeComponent();
+            tkDAL = new ticketDAL();
+            tbSearchTicket.ForeColor = Color.LightGray;
+            tbSearchTicket.Text = "Enter Tour ID to search";
+            this.tbSearchTicket.Leave += new System.EventHandler(this.textBox1_Leave);
+            this.tbSearchTicket.Enter += new System.EventHandler(this.textBox1_Enter);
+            tbSearchResID.ForeColor = Color.LightGray;
+            tbSearchResID.Text = "Enter Tour ID to search";
+            this.tbSearchResID.Leave += new System.EventHandler(this.textBox2_Leave);
+            this.tbSearchResID.Enter += new System.EventHandler(this.textBox2_Enter);
         }
         private void textBox1_Leave(object sender, EventArgs e)
         {
@@ -116,24 +126,19 @@ namespace Tour
 
         public void ShowTicketv2()
         {
+            
             string query = "Select MaPhieu, HoTen from ve";
 
             var TicketTable = DataConnection.Ins.session.Execute(query)
-                .Select(TicketSelector);
+                .Select(TicketSelectorV2);
 
-            //dgvQuanLy.DataSource = TicketTable.ToList();
-            //SqlConnection con = null; // dc.getConnect();
-            //adapter = new SqlDataAdapter(sql, con);
-            //con.Open();
-            //DataTable dt = new DataTable();
-            //adapter.Fill(dt);
-            //con.Close();
-            //dataGridView1.DataSource = dt;
+            dgvDatCho.DataSource = TicketTable.ToList();
         }
 
 
-        int TicketID, CustomerID, ReservationID, CostTicket;
-        string NameOfRouteType, NameOfTourType, TourID;
+        Guid TicketID, CustomerID, ReservationID, TourID;
+        decimal CostTicket;
+        string NameOfRouteType, NameOfTourType;
 
         private void dgvQuanLy_CellClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -141,19 +146,23 @@ namespace Tour
             String gender, tourist;
             if (index >= 0)
             {
-                CustomerID = Int32.Parse(dgvQuanLy.Rows[index].Cells["MaDuKhach"].Value.ToString());
-                TicketID = Int32.Parse(dgvQuanLy.Rows[index].Cells["MaVe"].Value.ToString());
-                ReservationID = Int32.Parse(dgvQuanLy.Rows[index].Cells["MaPhieuDatCho"].Value.ToString());
-                TourID = dgvQuanLy.Rows[index].Cells["MaChuyen"].Value.ToString();
+                CustomerID = Guid.Parse(dgvQuanLy.Rows[index].Cells["MaDuKhach"].Value.ToString());
+                TicketID = Guid.Parse(dgvQuanLy.Rows[index].Cells["MaVe"].Value.ToString());
+                ReservationID = Guid.Parse(dgvQuanLy.Rows[index].Cells["MaPhieuDatCho"].Value.ToString());
+                TourID = Guid.Parse(dgvQuanLy.Rows[index].Cells["MaChuyen"].Value.ToString());
                 NameOfTourType = dgvQuanLy.Rows[index].Cells["TenLoaiChuyen"].Value.ToString();
                 NameOfRouteType = dgvQuanLy.Rows[index].Cells["TenloaiTuyen"].Value.ToString();
-                CostTicket = Int32.Parse(dgvQuanLy.Rows[index].Cells["GiaVe"].Value.ToString());
+                CostTicket = decimal.Parse(dgvQuanLy.Rows[index].Cells["GiaVe"].Value.ToString());
 
                 tbID.Text = dgvQuanLy.Rows[index].Cells["MaChuyen"].Value.ToString();
                 tbName.Text = dgvQuanLy.Rows[index].Cells["HoTen"].Value.ToString();
                 tbAddress.Text = dgvQuanLy.Rows[index].Cells["DiaChi"].Value.ToString();
                 tbphone.Text = dgvQuanLy.Rows[index].Cells["SDT"].Value.ToString();
                 tbICN.Text = dgvQuanLy.Rows[index].Cells["CMND_Passport"].Value.ToString();
+
+                dtpVisa.Value = DateTime.Parse(dgvQuanLy.Rows[index].Cells["HanVisa"].Value.ToString());
+                dtpPassport.Value = DateTime.Parse(dgvQuanLy.Rows[index].Cells["HanPassport"].Value.ToString());
+
                 gender = dgvQuanLy.Rows[index].Cells["GioiTinh"].Value.ToString();
                 if (gender == "Male")
                 {
@@ -197,67 +206,61 @@ namespace Tour
                 cus.HoTen = tbName.Text;
                 cus.DiaChi = tbAddress.Text;
                 cus.SDT = tbphone.Text;
+
                 cus.GioiTinh = "Male";
+                if (rdbFemale.Checked == true)
+                {
+                    cus.GioiTinh = "Female";
+                }
+
                 if (rdbDomestic.Checked == true)
                 {
                     cus.MaLoaiKhach = "CUS001";
                 }
                 else cus.MaLoaiKhach = "CUS002";
 
-                if (rdbFemale.Checked == true)
-                {
-                    cus.GioiTinh = "Female";
-                }
-
                 cus.CMND_Passport = tbICN.Text;
                 cus.HanPassport = dtpPassport.Value;
                 cus.HanVisa = dtpVisa.Value;
 
-                if (cusDAL.Update(cus))
+                if (cusDAL.Update(cus) && tkDAL.UpdateCustomerInTicket(cus, TicketID, ReservationID))
                 {
                     ShowTicket();
+                    MessageBox.Show("Cập nhật thông tin hoàn tất", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 else MessageBox.Show("Error", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Error); ;
-                Clear();
+                //Clear();
             }
         }
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            //string value = tbSearchTicket.Text;
-            //if (!string.IsNullOrEmpty(value))
-            //{
-            //    string sql = "SELECT DuKhach.MaDuKhach, HanPassport, HanVisa, PhieuDatCho.MaChuyen, TenLoaiTuyen, TenLoaiChuyen, LePhiHoanTra, TienHoanTra, MaVe, Ve.MaPhieu, HoTen, DiaChi, SDT, GioiTinh, TenLoaiKhach, CMND_Passport, Ve.GiaVe FROM(((((((Ve INNER JOIN DuKhach ON Ve.MaDuKhach = DuKhach.MaDuKhach) INNER JOIN LoaiKhach ON DuKhach.MaLoaiKhach = LoaiKhach.MaLoaiKhach)Inner Join PhieuDatCho on PhieuDatCho.MaPhieu = Ve.MaPhieu) INNER JOIN ChuyenDuLich on PhieuDatCho.MaChuyen = ChuyenDuLich.MaChuyen) INNER JOIN Loaichuyen on ChuyenDuLich.MaLoaiChuyen = Loaichuyen.MaLoaiChuyen) INNER JOIN Tuyen on ChuyenDuLich.MaTuyen = Tuyen.MaTuyen)INNER JOIN LoaiTuyen on Tuyen.MaLoaiTuyen = LoaiTuyen.MaLoaiTuyen)  where PhieuDatCho.MaChuyen like N'%" + value + "%'";
-            //    SqlConnection con = null;// dc.getConnect();
-            //    adapter = new SqlDataAdapter(sql, con);
-            //    con.Open();
-            //    DataTable dt = new DataTable();
-            //    adapter.Fill(dt);
-            //    con.Close();
-            //    dgvQuanLy.DataSource = dt;
-            //}
-            //else { ShowTicket(); }
+            string value = tbSearchTicket.Text;
+            if (!string.IsNullOrEmpty(value) && value != "Enter Tour ID to search")
+            {
+                string query = "SELECT MaDuKhach, HanPassport, HanVisa, MaChuyen, TenLoaiTuyen, TenLoaiChuyen, LePhiHoanTra, TienHoanTra, MaVe, MaPhieu, HoTen, DiaChi, SDT, GioiTinh, TenLoaiKhach, CMND_Passport, GiaVe FROM Ve where MaChuyenSearch like '%" + value + "%'";
+                var VeTable = DataConnection.Ins.session.Execute(query)
+                .Select(TicketSelector);
+                dgvQuanLy.DataSource = VeTable.ToList();
+            }
+            else { ShowTicket(); }
         }
 
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
             string value = tbSearchResID.Text;
-            if (!string.IsNullOrEmpty(value))
+            if (!string.IsNullOrEmpty(value) && value != "Enter Tour ID to search")
             {
-                string sql = "Select PhieuDatCho.MaChuyen, Ve.MaPhieu, HoTen from (((Ve INNER JOIN DuKhach ON Ve.MaDuKhach = DuKhach.MaDuKhach) INNER JOIN LoaiKhach ON DuKhach.MaLoaiKhach = LoaiKhach.MaLoaiKhach)Inner Join PhieuDatCho on PhieuDatCho.MaPhieu = Ve.MaPhieu)  where MaChuyen like N'%" + value + "%'";
-                SqlConnection con = null;// dc.getConnect();
-                adapter = new SqlDataAdapter(sql, con);
-                con.Open();
-                DataTable dt = new DataTable();
-                adapter.Fill(dt);
-                con.Close();
-                dataGridView1.DataSource = dt;
+                string query = "Select MaChuyen, MaPhieu, HoTen from Ve where MaChuyenSearch like '%" + value + "%'";
+                var ChuyenTable = DataConnection.Ins.session.Execute(query)
+                .Select(TicketSelectorV2);
+                dgvDatCho.DataSource = ChuyenTable.ToList();
             }
             else { ShowTicketv2(); }
         }
 
         public bool CheckData()
         {
-            DateTime date = GetTime(tbID.Text);
+            DateTime date = GetTime(TourID);
 
             if (String.IsNullOrEmpty(tbName.Text) || String.IsNullOrEmpty(tbphone.Text) || String.IsNullOrEmpty(tbAddress.Text))
             {
@@ -354,33 +357,32 @@ namespace Tour
             DateTime date = GetTime(TourID);
             TimeSpan interval = date - current;
             tblTicket tk = new tblTicket();
+            tk.MaVe = TicketID;
+            tk.MaPhieu = ReservationID;
+            tk.MaDuKhach = CustomerID;
+
             Customer cus = new Customer();
-            Reservation res = new Reservation();
-   
-
-            float result;
-            float costA = 1;
-            int costB = 0;
-            //tk.MaVe = TicketID;
             cus.MaDuKhach = CustomerID;
-            res.MaPhieu = ReservationID;
 
-            if (NameOfRouteType == "National" && interval.Hours < 4)
-            {
-                costB = getLePhiHoanTra(NameOfRouteType);               
-            }
-            else if (NameOfRouteType == "International" && interval.Days < 3)
-            {
-                costB = getLePhiHoanTra(NameOfRouteType);               
-            }
-            if (NameOfTourType == "Regular")
-            {
-                costA = getTienHoantra(NameOfTourType);
-            }
-            else if (NameOfTourType == "Promotional")
-            {
-                costA = getTienHoantra(NameOfTourType);
-            }
+            Reservation res = new Reservation();
+            res.MaPhieu = ReservationID;
+            res.MaChuyen = TourID;
+
+
+            decimal result;
+            decimal costA = 1;
+            int costB = 0;
+
+            tblTicket ticket = DataConnection.Ins.session
+                .Execute("Select * from Ve where MaVe = " + TicketID + " and MaPhieu = " + res.MaPhieu + " and MaDuKhach = " + cus.MaDuKhach)
+                .Select(TicketSelector)
+                .FirstOrDefault();
+
+            if (ticket == null)
+                return;
+
+            costA = ticket.TienHoanTra;
+            costB = ticket.LePhiHoanTra;
 
             result = (CostTicket * costA) - costB;
             if (result > 0)
@@ -394,11 +396,12 @@ namespace Tour
 
             Clear();
 
-            //if (tkDAL.Delete(tk) && cusDAL.Delete(cus) && resDAL.Delete(res))
-            //{
-            //    ShowTicket();
-            //}
-            //else MessageBox.Show("Error", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            if (tkDAL.Delete(tk) && cusDAL.Delete(cus) && resDAL.Delete(res))
+            {
+                ShowTicket();
+                ShowTicketv2();
+            }
+            else MessageBox.Show("Error", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
 
         private void btnDel_Click(object sender, EventArgs e)
@@ -406,15 +409,21 @@ namespace Tour
             if (MessageBox.Show("are you sure ?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
             {
                 tblTicket tk = new tblTicket();
+                tk.MaVe = TicketID;
+                tk.MaPhieu = ReservationID;
+                tk.MaDuKhach = CustomerID;
+
                 Customer cus = new Customer();
-                Reservation res = new Reservation();
-                //tk.MaVe = TicketID;
                 cus.MaDuKhach = CustomerID;
+
+                Reservation res = new Reservation();
                 res.MaPhieu = ReservationID;
+                res.MaChuyen = TourID;
 
                 if (tkDAL.Delete(tk) && cusDAL.Delete(cus) && resDAL.Delete(res))
                 {
                     ShowTicket();
+                    ShowTicketv2();
                 }
                 else MessageBox.Show("Error", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 tientong();
@@ -453,21 +462,19 @@ namespace Tour
             return cost;
         }
 
-        public DateTime GetTime(string MaChuyen)
+        public DateTime GetTime(Guid MaChuyen)
         {
             DateTime date = new DateTime();
-            string sql = "SELECT ThoiGianKhoiHanh FROM ChuyenDuLich WHERE MaChuyen = @MaChuyen";
-            SqlConnection con = null; // dc.getConnect();
+            Func<Row, DateTime> DateSelector = delegate (Row r)
+            {
+                return r.GetValue<DateTime>("thoigiankhoihanh");
+            };
+            
             try
             {
-                SqlCommand cmd = new SqlCommand(sql, con);
-                con.Open();
-                cmd.Parameters.AddWithValue("@MaChuyen", MaChuyen);
-                SqlDataReader da = cmd.ExecuteReader();
-                while (da.Read())
-                {
-                    date = da.GetDateTime(0);
-                }
+                date = DataConnection.Ins.session.Execute("SELECT ThoiGianKhoiHanh FROM ChuyenDuLich WHERE MaChuyen =" + MaChuyen)
+                .Select(DateSelector)
+                .FirstOrDefault();
             }
             catch (Exception e)
             {

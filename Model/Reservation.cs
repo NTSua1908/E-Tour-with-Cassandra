@@ -8,7 +8,7 @@ namespace Tour
 {
     class Reservation
     {
-        public int MaPhieu { set; get; }
-        public string MaChuyen { set; get; }
+        public Guid MaPhieu { set; get; }
+        public Guid MaChuyen { set; get; }
     }
 }

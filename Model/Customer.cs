@@ -8,7 +8,7 @@ namespace Tour
 {
     class Customer
     {
-        public int MaDuKhach { set; get; }
+        public Guid MaDuKhach { set; get; }
         public string HoTen { set; get; }
         public string DiaChi { set; get; }
         public string SDT { set; get; }

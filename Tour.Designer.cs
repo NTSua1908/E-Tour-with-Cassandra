@@ -722,6 +722,7 @@
             this.Controls.Add(this.btn_update);
             this.Controls.Add(this.groupBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Tour";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

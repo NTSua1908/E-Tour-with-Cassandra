@@ -15,7 +15,6 @@ namespace Tour
         public string MaLoaiChuyen { set; get; }
         public string TenLoaiChuyen { set; get; }
         public DateTime ThoiGianKhoiHanh { set; get; }
-        public decimal TienHoanTra { set; get; }
         public string PhuongTien { set; get; }
         public int SoLuongVeMax { set; get; }
         public decimal GiaVe { set; get; }

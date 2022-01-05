@@ -107,7 +107,9 @@ namespace Tour
             forgotpass forgotpass = new forgotpass();
             this.Hide();
             forgotpass.ShowDialog();
-            this.Show();
+
+            if (!this.IsDisposed)
+                this.Show();
         }
 
         private void emailtxb_Validating(object sender, CancelEventArgs e)

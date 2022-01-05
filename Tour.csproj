@@ -32,6 +32,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>tickets.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Cassandra, Version=3.99.0.0, Culture=neutral, PublicKeyToken=10b231fbfc8c4b4d, processorArchitecture=MSIL">
       <HintPath>packages\CassandraCSharpDriver.3.17.1\lib\net452\Cassandra.dll</HintPath>
@@ -359,6 +362,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\4.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="tickets.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

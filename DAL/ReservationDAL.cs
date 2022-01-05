@@ -10,27 +10,13 @@ namespace Tour
 {
     class ReservationDAL
     {
-        DataConnection dc;
-        SqlCommand cmd;
-        public ReservationDAL()
+        public bool Insert(Reservation res)
         {
-            //dc = new DataConnection();
-        }
-        public bool Insert(Reservation res, ref String MaPhieu)
-        {
-            string sql = "INSERT INTO PhieuDatCho(MaChuyen) VALUES (@MaChuyen) SELECT SCOPE_IDENTITY()";
-            SqlConnection con = null;// dc.getConnect();
+            var ps = DataConnection.Ins.session.Prepare("INSERT INTO PhieuDatCho(MaPhieu, MaChuyen) VALUES (?, ?)");
             try
             {
-                cmd = new SqlCommand(sql, con);
-                con.Open();
-                cmd.Parameters.AddWithValue("@MaChuyen", res.MaChuyen);
-
-                SqlDataAdapter adapter = new SqlDataAdapter(cmd);
-                DataTable table = new DataTable();
-                adapter.Fill(table);
-                MaPhieu = table.Rows[0][0].ToString();
-                con.Close();
+                var query = ps.Bind(res.MaPhieu, res.MaChuyen);
+                DataConnection.Ins.session.Execute(query);
             }
             catch (Exception e)
             {
@@ -38,18 +24,14 @@ namespace Tour
             }
             return true;
         }
+        
 
         public bool Delete(Reservation res)
         {
-            string sql = "DELETE PhieuDatCho WHERE MaPhieu = @MaPhieu";
-            SqlConnection con = null;// dc.getConnect();
+            string query = "DELETE from PhieuDatCho WHERE MaPhieu = " + res.MaPhieu + " and MaChuyen = " + res.MaChuyen;
             try
             {
-                cmd = new SqlCommand(sql, con);
-                con.Open();
-                cmd.Parameters.Add("@MaPhieu", SqlDbType.NVarChar).Value = res.MaPhieu;
-                cmd.ExecuteNonQuery();
-                con.Close();
+                DataConnection.Ins.session.Execute(query);
             }
             catch (Exception e)
             {

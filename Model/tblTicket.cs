@@ -12,6 +12,7 @@ namespace Tour
         public Guid MaPhieu { set; get; }
         public Guid MaDuKhach { set; get; }
         public Guid MaChuyen { set; get; }
+        public string MaChuyenSearch { set; get; }
 
         public Decimal GiaVe { set; get; }
         public Decimal TienHoanTra { set; get; }
