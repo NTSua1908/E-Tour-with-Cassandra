@@ -289,12 +289,12 @@ namespace Tour
 
         private void rdbRegular_Enter(object sender, EventArgs e)
         {
-            ShowAllChuyen();
+            //ShowAllChuyen();
         }
 
         private void rdbPromotional_Enter(object sender, EventArgs e)
         {
-            ShowAllChuyen();
+            //ShowAllChuyen();
         }
 
         private void tb_price_Enter(object sender, EventArgs e)

@@ -54,12 +54,12 @@ namespace Tour
         //Kiểm tra dữ liệu đầu vào
         public bool CheckData()
         {
-            if (string.IsNullOrEmpty(IDtxb.Text))
-            {
-                MessageBox.Show("Please fill the Route Code box", "Alert", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                IDtxb.Focus();
-                return false;
-            }
+            //if (string.IsNullOrEmpty(IDtxb.Text))
+            //{
+            //    MessageBox.Show("Please fill the Route Code box", "Alert", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            //    IDtxb.Focus();
+            //    return false;
+            //}
             if (string.IsNullOrEmpty(tNametxb.Text))
             {
                 MessageBox.Show("Please fill the Route Name box", "Alert", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -288,7 +288,7 @@ namespace Tour
 
         private void rdbInternational_Enter(object sender, EventArgs e)
         {
-            ShowAllTuyen();
+            //ShowAllTuyen();
         }
 
         private void daytxb_Enter(object sender, EventArgs e)
@@ -303,7 +303,7 @@ namespace Tour
 
         private void rdbNational_Enter(object sender, EventArgs e)
         {
-            ShowAllTuyen();
+            //ShowAllTuyen();
         }
 
         private void searchtxb_Leave(object sender, EventArgs e)

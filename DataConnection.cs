@@ -24,7 +24,7 @@ namespace Tour
         private static DataConnection _Ins;
 
         public ISession session;
-        private string IP = "127.0.0.1";
+        private string IP = "172.30.67.65";
         private string Datacenter = "datacenter1";
 
         private DataConnection()
