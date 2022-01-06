@@ -163,6 +163,8 @@ namespace Tour
         //Xoá một tuyến
         private void Deletebtn_Click(object sender, EventArgs e)
         {
+            if (string.IsNullOrEmpty(IDtxb.Text))
+                return;
             if (MessageBox.Show("Are you sure to delete this?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
             {
                 tblTuyen route = new tblTuyen();

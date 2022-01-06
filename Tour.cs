@@ -53,12 +53,6 @@ namespace Tour
         }
         public bool CheckData()
         {
-            if (string.IsNullOrEmpty(idTuyencb.SelectedValue.ToString()))
-            {
-                MessageBox.Show("Please choose the Route Code box", "Alert", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                idTuyencb.Focus();
-                return false;
-            }
             if (string.IsNullOrEmpty(cbHour.Text))
             {
                 MessageBox.Show("Please choose the hour", "Alert", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -340,5 +334,6 @@ namespace Tour
                 e.Handled = true;
             }
         }
+
     }
 }
