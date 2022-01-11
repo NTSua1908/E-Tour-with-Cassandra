@@ -114,8 +114,8 @@ namespace Tour
                     route.MaLoaiTuyen = "ROUTE01";
                     route.TenLoaiTuyen = "National";
                 }
-                else 
-                { 
+                else
+                {
                     route.MaLoaiTuyen = "ROUTE02";
                     route.TenLoaiTuyen = "International";
                 }
@@ -128,7 +128,48 @@ namespace Tour
                 Clear();
             }
         }
-
+        public string RouteID,RouteName, Departure, Location, Days, Nights, RouteCode, TypeofRoute;
+        public bool addTuyen()
+        {
+            tblTuyen route = new tblTuyen();
+            route.TenTuyen = RouteName;
+            route.XuatPhat = Departure;
+            route.DiaDiem = Location;
+            route.ThoiGianToChuc = Days + " Day " + Nights + " Night";
+            route.MaLoaiTuyen = RouteCode;
+            route.TenLoaiTuyen = TypeofRoute;
+            if (bllTuyen.InsertTuyen(route))
+            {
+                return true;
+            }
+            return false;
+        }
+        public bool deleteTuyen()
+        {
+            tblTuyen route = new tblTuyen();
+            route.MaTuyen = Guid.Parse(RouteID);
+            if (bllTuyen.DeleteTuyen(route))
+            {
+                return true;
+            }
+            return false;
+        }
+        public bool updateTuyen()
+        {
+            tblTuyen route = new tblTuyen();
+            route.MaTuyen = Guid.Parse(RouteID);
+            route.TenTuyen = RouteName;
+            route.XuatPhat = Departure;
+            route.DiaDiem = Location;
+            route.ThoiGianToChuc = Days + " Day " + Nights + " Night";
+            route.MaLoaiTuyen = RouteCode;
+            route.TenLoaiTuyen = TypeofRoute;
+            if (bllTuyen.UpdateTuyen(route))
+            {
+                return true;
+            }
+            return false;
+        }
         //Sửa một tuyến
         private void Updatebtn_Click(object sender, EventArgs e)
         {

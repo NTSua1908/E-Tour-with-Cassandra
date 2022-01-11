@@ -160,7 +160,62 @@ namespace Tour
             }
             return true;
         }
+        public string SurName, Name, address, phonenumber,typeCus, gender,CMND,TourID,tourist,typeoftour,RouteID,TenChuyen;
+        public int Year, Month, Day, vYear, vMonth, vDay,price,tienhoantra,lephihoantra;
+        bool checkCus,checkRes;
+        public bool CreateCustomer()
+        {
+            tblTicket tk = new tblTicket();
+            Customer cus = new Customer();
+            DateTime date = new DateTime(Year, Month, Day);
+            DateTime datevisa = new DateTime(vYear, vMonth, vDay);
+            Reservation res = new Reservation();
+            cus.MaDuKhach = Guid.NewGuid();
+            cus.HoTen = SurName + " " + Name;
+            cus.DiaChi = address;
+            cus.SDT = phonenumber;
+            cus.MaLoaiKhach = typeCus;
+            cus.GioiTinh = gender;
+            cus.CMND_Passport = CMND;
+            cus.HanPassport = date;
+            cus.HanVisa = datevisa;
+            tk.TenLoaiKhach = tourist;
+            res.MaChuyen = Guid.Parse(TourID);
+            res.MaPhieu = Guid.NewGuid();
+            if (tk.TenLoaiKhach=="Foreign")
+            {
 
+                checkCus = cusDAL.InsertForeign(cus);
+            }
+            else checkCus = cusDAL.InsertDomestic(cus);
+            checkRes = resDAL.Insert(res);
+            tk.MaVe = Guid.NewGuid();
+            tk.MaDuKhach = cus.MaDuKhach;
+            tk.MaPhieu = res.MaPhieu;
+            tk.GiaVe = price;
+            tk.HoTen = cus.HoTen;
+            tk.DiaChi = cus.DiaChi;
+            tk.SDT = cus.SDT;
+            tk.CMND_Passport = cus.CMND_Passport;
+            tk.HanPassport = cus.HanPassport;
+            tk.HanVisa = cus.HanVisa;
+            tk.GioiTinh = cus.GioiTinh;
+            tk.TenLoaiChuyen = TenChuyen;
+
+            tk.TenLoaiTuyen = typeoftour;
+            tk.TienHoanTra = tienhoantra;
+
+            tk.LePhiHoanTra = lephihoantra ;
+            tk.MaChuyen = Guid.Parse(RouteID);
+            tk.MaChuyenSearch = tk.MaChuyen.ToString();
+
+
+            if (checkCus && tkDAL.Insert(tk) && checkRes)
+            {
+                return true;
+            }
+            return false;
+        }
         private void btCreate_Click(object sender, EventArgs e)
         {
             string MaVe = "", MaPhieu = "";

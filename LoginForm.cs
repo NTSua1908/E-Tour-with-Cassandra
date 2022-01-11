@@ -14,6 +14,7 @@ namespace Tour
 {
     public partial class LoginForm : Form
     {
+
         System.Text.RegularExpressions.Regex rEMail = new System.Text.RegularExpressions.Regex(@"^([a-zA-Z0-9_\-])([a-zA-Z0-9_\-\.]*)@(\[((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.){3}|((([a-zA-Z0-9\-]+)\.)+))([a-zA-Z]{2,}|(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\])$");
         public LoginForm()
         {
@@ -56,7 +57,7 @@ namespace Tour
                 Application.Exit();
             }  
         }
-        private void loginbtn_Click(object sender, EventArgs e)
+        public void loginbtn_Click(object sender, EventArgs e)
         {
             if (cbghinho.Checked == true)
             {
@@ -136,6 +137,19 @@ namespace Tour
             this.Hide();
             ra.ShowDialog();
             this.Show();
+        }
+        public string password, email;
+        public bool Login()
+        {
+            password = Encrypt(password);
+            string query = "Select * from User Where Email ='" + email + "' and Password = '" + password + "'  ALLOW FILTERING";
+            Cassandra.RowSet row = DataConnection.Ins.session.Execute(query);
+
+            if (row.FirstOrDefault() != null)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

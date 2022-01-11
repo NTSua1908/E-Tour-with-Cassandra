@@ -184,7 +184,59 @@ namespace Tour
                 Clear();
             }
         }
-
+        public string TourID, TourName , TourCode, TypeofTour,Transport,RouteID;
+        public int Hour, Minute, Year, Month, Day, Tickets,Price;
+        public bool addChuyen()
+        {
+            DateTime date ;
+            tblChuyen route = new tblChuyen();
+            date = new DateTime(Year, Month, Day, Hour, Minute, 0);
+            route.MaTuyen = Guid.Parse(RouteID);
+            route.MaChuyen = Guid.NewGuid();
+            route.TenTuyen = TourName;
+            route.ThoiGianKhoiHanh = date;
+            route.PhuongTien = Transport;
+            route.SoLuongVeMax = Tickets;
+            route.GiaVe = Price;
+            route.MaLoaiChuyen = TourCode;
+            route.TenLoaiChuyen = TypeofTour;
+            route.MaChuyenSearch = route.MaChuyen.ToString();
+            if (bllChuyen.InsertChuyen(route))
+            {
+                return true;
+            }
+            return false;
+        }
+        public bool deleteChuyen()
+        {
+            tblChuyen route = new tblChuyen();
+            route.MaChuyen = Guid.Parse(TourID);
+            if (bllChuyen.DeleteChuyen(route))
+            {
+                return true;
+            }
+            return false;
+        }
+        public bool updateChuyen()
+        {
+            DateTime date;
+            tblChuyen route = new tblChuyen();
+            date = new DateTime(Year, Month, Day, Hour, Minute, 0);
+            route.MaTuyen =  Guid.Parse(RouteID);
+            route.MaChuyen = Guid.Parse(TourID);
+            route.TenTuyen = TourName;
+            route.ThoiGianKhoiHanh = date;
+            route.PhuongTien = Transport;
+            route.SoLuongVeMax = Tickets;
+            route.GiaVe = Price;
+            route.MaLoaiChuyen = TourCode;
+            route.TenLoaiChuyen = TypeofTour;
+            if (bllChuyen.UpdateChuyen(route))
+            {
+                return true;
+            }
+            return false;
+        }
         private void dgv_trip_CellClick_1(object sender, DataGridViewCellEventArgs e)
         {
             int index = e.RowIndex;

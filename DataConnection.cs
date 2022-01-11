@@ -24,7 +24,7 @@ namespace Tour
         private static DataConnection _Ins;
 
         public ISession session;
-        private string IP = "172.30.67.65";
+        private string IP = "172.26.189.180"; // có thể dùng 1 trong 3 ip của 3 host để kết nối vs csdl
         private string Datacenter = "datacenter1";
 
         private DataConnection()

@@ -403,7 +403,25 @@ namespace Tour
             }
             else MessageBox.Show("Error", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
-
+        public string mave,maphieu,madukhach,tourID;
+        public bool XoaKhach()
+        {
+            tblTicket tk = new tblTicket();
+            tk.MaVe = Guid.Parse(mave);
+            tk.MaPhieu =Guid.Parse(maphieu);
+            tk.MaDuKhach = Guid.Parse(madukhach);
+            Customer cus = new Customer();
+            cus.MaDuKhach= Guid.Parse(madukhach);
+            Reservation res = new Reservation();
+            res.MaPhieu = Guid.Parse(maphieu);
+            res.MaChuyen = Guid.Parse(tourID);
+            if (tkDAL.Delete(tk) && cusDAL.Delete(cus) && resDAL.Delete(res))
+            {
+                return true;
+            }           
+            tientong();
+            return false;
+        }
         private void btnDel_Click(object sender, EventArgs e)
         {
             if (MessageBox.Show("are you sure ?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
